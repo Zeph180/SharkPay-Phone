@@ -1,0 +1,7 @@
+{
+  "name": "quickAgent",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
