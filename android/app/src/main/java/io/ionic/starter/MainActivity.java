@@ -1,8 +1,12 @@
 package io.ionic.starter;
 
-import com.nexgo.smartpos.sdk.APIProxy;
-import com.nexgo.smartpos.sdk.DeviceEngine;
-import com.nexgo.smartpos.sdk.module.beeper.Beeper;
+import com.getcapacitor.BridgeActivity;
+import android.os.Bundle;
+import com.nexgo.oaf.apiv3.APIProxy;
+import com.nexgo.oaf.apiv3.DeviceEngine;
+import com.nexgo.oaf.apiv3.SdkResult;
+import com.nexgo.oaf.apiv3.device.beeper.Beeper;
+
 
 import com.getcapacitor.BridgeActivity;
 
