@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Payments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col
+        size="6"
+        size-md="4"
+        *ngFor="let payment of paymentTypes"
+        (click)="navigateToPayment(payment.page)">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ payment.title }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-icon [name]="payment.icon" size="large"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

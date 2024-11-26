@@ -3,5 +3,8 @@
     "@ionic/angular/common",
     "@ionic/angular/standalone"
   ],
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "cSpell.words": [
+    "occured"
+  ]
 }

@@ -1,0 +1,66 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Airtime</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="airtimeForm" (ngSubmit)="submit()">
+    <ion-list>
+      <ion-item>
+        <ion-input
+        label="Phone Number"
+          formControlName="phoneNumber"
+          type="tel"
+          placeholder="Enter phone number"
+          label-placement="floating"
+          fill="outline"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('phoneNumber', 'required')">
+        Phone Number is required
+      </ion-text>
+<br />
+      <ion-item>
+        <ion-input
+        label="Amount"
+          formControlName="amount"
+          type="number"
+          placeholder="Enter amount"
+          label-placement="floating"
+          fill="outline"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('amount', 'required')">
+        Amount is required
+      </ion-text>
+      <br />
+
+      <ion-item>
+        <ion-input
+        label="Password"
+          formControlName="password"
+          type="password"
+          placeholder="Enter password"
+          fill="outline"
+          label-placement="floating"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('password', 'required')">
+        Password is required
+      </ion-text>
+      <br />
+
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button type="submit" expand="block">Pay Airtime</ion-button>
+    </div>
+  </form>
+</ion-content>

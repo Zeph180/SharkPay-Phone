@@ -1,0 +1,37 @@
+:host {
+    --ion-color-primary: #1e88e5; /* Blue theme */
+    --ion-color-warning: #ff9800; /* Orange theme */
+
+    .account-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .account-title {
+      color: var(--ion-color-primary);
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    ion-card {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    ion-label h2 {
+      font-weight: bold;
+      color: var(--ion-color-primary);
+    }
+
+    ion-label p {
+      color: var(--ion-color-dark);
+    }
+
+    ion-button {
+      --background: var(--ion-color-warning);
+      --color: white;
+    }
+  }

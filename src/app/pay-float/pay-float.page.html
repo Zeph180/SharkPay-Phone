@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Buy Float</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="formData" (ngSubmit)="submit()">
+    <ion-item>
+      <ion-input
+        label="Account Number"
+        formControlName="accountNumber"
+        placeholder="Enter account number"
+        fill="outline"
+        label-placement="floating"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Phone Number"
+        formControlName="phoneNumber"
+        type="tel"
+        placeholder="Enter phone number"
+        fill="outline"
+        label-placement="floating"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Amount"
+        formControlName="amount"
+        type="number"
+        placeholder="Enter amount"
+        fill="outline"
+        label-placement="floating"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Password"
+        formControlName="password"
+        type="password"
+        placeholder="Enter password"
+        fill="outline"
+        label-placement="floating"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <div class="ion-padding">
+      <ion-button expand="block" type="submit" [disabled]="formData.invalid">
+        Pay Float
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

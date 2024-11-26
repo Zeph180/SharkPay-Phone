@@ -1,0 +1,80 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-menu-button></ion-menu-button>
+      <ion-title size="large">home</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card class="wallet-card">
+    <ion-card-content>
+      <div class="wallet-info">
+        <h1>1,310,920 UGX</h1>
+        <p>Agent Number</p>
+        <h2>37369</h2>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+ <!-- Popular Services -->
+ <ion-text class="ion-padding">Popular Services</ion-text>
+ <ion-card>
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col
+          size="4"
+          *ngFor="let popular of popularServices"
+          class="ion-text-center service-item"
+        >
+          <ion-button
+            fill="clear"
+            class="service-btn"
+            style="margin: 0; padding: 0;"
+            routerDirection="root"
+            [routerLink]="[popular.route]"
+          >
+            <ion-icon [md]="popular.icon" size="large" style="color: white;"></ion-icon>
+          </ion-button>
+          <ion-text>{{ popular.title }}</ion-text>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+
+  <!-- SwApp Banner -->
+  <ion-card class="banner-card">
+    <ion-card-content>
+      <div class="banner">
+        <h2>Shark Pay</h2>
+        <p>Send money to other Shark Pay Users. <br /> No Charges!</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Commissions Section -->
+   <ion-text class="ion-padding">Commissions</ion-text>
+  <ion-card>
+    <ion-card-content>
+      <div class="scroll-container">
+        <ion-item *ngFor="let commission of commissions">
+          <ion-label>
+            <h2>{{ commission.amount }}</h2>
+            <p>Next Payout</p>
+          </ion-label>
+          <ion-note slot="end">{{ commission.date }}</ion-note>
+        </ion-item>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

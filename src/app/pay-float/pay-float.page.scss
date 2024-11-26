@@ -1,0 +1,15 @@
+:host {
+    ion-content {
+      --padding-start: 16px;
+      --padding-end: 16px;
+    }
+
+    ion-item {
+      margin-top: 16px;
+    }
+
+    ion-button {
+      --background: #1e88e5; /* Blue color for button */
+      --color: white;
+    }
+  }

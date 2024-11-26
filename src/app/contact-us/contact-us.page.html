@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Contact Us</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <ion-card class="contact-card">
+      <ion-card-header>
+        <!-- <ion-card-title>Contact Information</ion-card-title> -->
+        <ion-card-subtitle>We are here to assist you</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="contact-info">
+          <ion-item>
+            <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+            <!-- <ion-label>Support Hotline:</ion-label> -->
+            <p>+256 700 123456</p>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+            <!-- <ion-label>Email Support:</ion-label> -->
+            <p>support&#64;swapp.com</p>
+          </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <!-- <ion-label>Operating Hours:</ion-label> -->
+            <p>Mon-Fri, 8:00 AM - 5:00 PM</p>
+          </ion-item>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

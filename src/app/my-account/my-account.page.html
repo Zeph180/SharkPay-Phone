@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <!-- Account Information Section -->
+ <div class="account-container ion-padding">
+  <ion-card color="light">
+    <ion-card-header>
+      <ion-card-title class="account-title">Account Details</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Agent Name -->
+      <ion-item lines="none">
+        <ion-label>
+          <h2>Agent Name</h2>
+          <p>{{ agentDetails.name }}</p>
+        </ion-label>
+      </ion-item>
+
+      <!-- Agent Number -->
+      <ion-item lines="none">
+        <ion-label>
+          <h2>Agent Number</h2>
+          <p>{{ agentDetails.agentNumber }}</p>
+        </ion-label>
+      </ion-item>
+
+      <!-- Account Balance -->
+      <ion-item lines="none">
+        <ion-label>
+          <h2>Account Balance</h2>
+          <p>{{ agentDetails.accountBalance | currency: 'UGX' }}</p>
+        </ion-label>
+      </ion-item>
+
+      <!-- Commission -->
+      <ion-item lines="none">
+        <ion-label>
+          <h2>Commission</h2>
+          <p>{{ agentDetails.commission | currency: 'UGX' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<!-- Logout Button -->
+<div class="ion-padding">
+  <ion-button expand="block" color="warning" (click)="logout()">
+    Logout
+  </ion-button>
+</div>
+</ion-content>

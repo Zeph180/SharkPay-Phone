@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>UMEME</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="FormData" (ngSubmit)="submit()" style="margin-top: 20px;">
+    <!-- TIN -->
+    <ion-item>
+      <ion-input
+        formControlName="tin"
+        label="TIN"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter Tax Identification Number"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('tin')?.invalid && FormData.get('tin')?.touched" class="error">
+      <small *ngIf="FormData.get('tin')?.errors?.['required']">TIN is required</small>
+      <small *ngIf="FormData.get('tin')?.errors?.['minlength']">TIN must be at least 10 characters</small>
+    </div>
+    <br />
+
+    <!-- Payment Reference -->
+    <ion-item>
+      <ion-input
+        formControlName="reference"
+        label="Payment Reference"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter Payment Reference"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+      <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+    </div>
+    <br />
+
+    <!-- Amount -->
+    <ion-item>
+      <ion-input
+        formControlName="amount"
+        label="Amount"
+        type="number"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter Amount"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('amount')?.invalid && FormData.get('amount')?.touched" class="error">
+      <small *ngIf="FormData.get('amount')?.errors?.['required']">Amount is required</small>
+      <small *ngIf="FormData.get('amount')?.errors?.['pattern']">Enter a valid amount</small>
+    </div>
+    <br />
+
+    <!-- Payer Name -->
+    <ion-item>
+      <ion-input
+        formControlName="payerName"
+        label="Payer Name"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter Payer Name"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('payerName')?.invalid && FormData.get('payerName')?.touched" class="error">
+      <small *ngIf="FormData.get('payerName')?.errors?.['required']">Payer Name is required</small>
+    </div>
+    <br />
+
+    <!-- Password -->
+    <ion-item>
+      <ion-input
+        formControlName="password"
+        label="Password"
+        type="password"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter password"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('password')?.invalid && FormData.get('password')?.touched" class="error">
+      <small *ngIf="FormData.get('password')?.errors?.['required']">Password is required</small>
+      <small *ngIf="FormData.get('password')?.errors?.['minlength']">Password must be at least 6 characters</small>
+    </div>
+    <br />
+
+    <!-- Submit Button -->
+    <ion-button expand="block" type="submit" [disabled]="FormData.invalid">
+      Submit Payment
+    </ion-button>
+  </form>
+</ion-content>
