@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
+      <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>My Account</ion-title>
   </ion-toolbar>
@@ -18,8 +18,9 @@
       <!-- Agent Name -->
       <ion-item lines="none">
         <ion-label>
-          <h2>Agent Name</h2>
-          <p>{{ agentDetails.name }}</p>
+          <h2>Agent</h2>
+          <p>Name: {{ user.names }}</p>
+          <p>Email: {{ user.email }}</p>
         </ion-label>
       </ion-item>
 
@@ -27,23 +28,16 @@
       <ion-item lines="none">
         <ion-label>
           <h2>Agent Number</h2>
-          <p>{{ agentDetails.agentNumber }}</p>
+          <p>{{ user.customerId }}</p>
         </ion-label>
       </ion-item>
 
       <!-- Account Balance -->
-      <ion-item lines="none">
+      <ion-item lines="none" *ngFor="let account of accounts">
         <ion-label>
-          <h2>Account Balance</h2>
-          <p>{{ agentDetails.accountBalance | currency: 'UGX' }}</p>
-        </ion-label>
-      </ion-item>
-
-      <!-- Commission -->
-      <ion-item lines="none">
-        <ion-label>
-          <h2>Commission</h2>
-          <p>{{ agentDetails.commission | currency: 'UGX' }}</p>
+          <h2>{{ account.accountName }}</h2>
+          <p>No: {{ account.accountNumber }}</p>
+          <p>Balance {{ account.balance| currency: 'UGX' }}</p>
         </ion-label>
       </ion-item>
     </ion-card-content>

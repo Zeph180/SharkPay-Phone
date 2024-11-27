@@ -8,22 +8,40 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-menu-button></ion-menu-button>
-      <ion-title size="large">home</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-card class="wallet-card">
+  <!-- <ion-card class="wallet-card" *ngFor="let account of accounts">
     <ion-card-content>
       <div class="wallet-info">
-        <h1>1,310,920 UGX</h1>
-        <p>Agent Number</p>
-        <h2>37369</h2>
+        <p>{{account.accountType}}</p>
+        <h3>{{account.accountNumber}}</h3>
+        <p>Account Balance</p>
+        <h2>{{account.balance}}</h2>
+      </div>
+    </ion-card-content>
+  </ion-card> -->
+
+  <swiper-container
+    [slidesPerView]="1.1"
+    [spaceBetween]="10"
+    [loop]="true"
+    [pagination]="true"
+    class="mySwiper"
+  >
+  <swiper-slide     *ngFor="let account of accounts">
+    <ion-card
+    class="wallet-card"
+    style="width: 95%;"
+  >
+    <ion-card-content>
+      <div class="wallet-info">
+        <p>{{ account.accountType }}</p>
+        <h2>{{ account.accountNumber }}</h2>
+        <p>Account Balance</p>
+        <h2>{{ account.balance }}</h2>
       </div>
     </ion-card-content>
   </ion-card>
+  </swiper-slide>
+</swiper-container>
 
  <!-- Popular Services -->
  <ion-text class="ion-padding">Popular Services</ion-text>

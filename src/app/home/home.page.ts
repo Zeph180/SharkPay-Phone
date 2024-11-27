@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { GlobalMethodsService } from '../helpers/global-methods.service';
+import Swiper from 'swiper';
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -47,11 +48,31 @@ export class HomePage implements OnInit {
     }
   ]
 
+  public accounts: {
+    accountNumber: string
+    balance: string,
+    accountName: string,
+    accountTypeId: string,
+    accountType: string
+  }[] = []
+
+  public swiper!: Swiper
+
   constructor(
-    public router: Router
-  ) { }
+    public router: Router,
+    private globalMethods: GlobalMethodsService,
+  ) {
+    this.accounts = this.globalMethods.getUserData<{
+      accountNumber: string;
+      balance: string;
+      accountName: string;
+      accountTypeId: string;
+      accountType: string;
+    }[]>('accounts') || [];
+  }
 
   ngOnInit() {
+    console.log("acc:  ", this.accounts)
   }
 
   navigateTo(service: any) {

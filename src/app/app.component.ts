@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { register } from 'swiper/element/bundle';
+import { GlobalMethodsService } from './helpers/global-methods.service';
+
+register();
 
 @Component({
   selector: 'app-root',
@@ -18,9 +22,20 @@ export class AppComponent {
     { title: 'Logout', url: '/', icon: 'warning' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  showMenu = true; // Flag to control menu visibility
+  showMenu = true;
 
-  constructor(private router: Router) {
+  public accounts: {
+    accountNumber: string
+    balance: string,
+    accountName: string,
+    accountTypeId: string,
+    accountType: string
+  }[] = []
+
+  constructor(
+    private router: Router,
+    private globalMethods: GlobalMethodsService,
+  ) {
     // Subscribe to route changes
     this.router.events.subscribe(() => {
       // Hide the menu on the login page

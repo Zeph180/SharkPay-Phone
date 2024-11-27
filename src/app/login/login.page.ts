@@ -49,7 +49,7 @@ export class LoginPage implements OnInit {
 
   async presentLoading(message: string = 'Please wait...') {
     const loading = await this.loadingController.create({
-      message,
+      message: message,
       translucent: true,
       cssClass: 'my-custom-loader',
       backdropDismiss: true,

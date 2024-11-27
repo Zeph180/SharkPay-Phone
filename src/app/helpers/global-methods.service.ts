@@ -21,4 +21,14 @@ export class GlobalMethodsService {
 
     await alert.present();
   }
+
+  getUserData<T>(key: string): T | null {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) as T : null; // Return parsed data or null if it doesn't exist
+  }
+
+  storeUserData(key: string, data: any) {
+    localStorage.setItem(key, data);
+  }
+
 }
