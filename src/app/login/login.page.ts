@@ -3,6 +3,7 @@ import { LoadingController, NavController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../sharkServices/authentication.service';
 import { Router } from '@angular/router';
+import { GlobalMethodsService } from '../helpers/global-methods.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginPage implements OnInit {
   constructor(
     private navCtrl: NavController,
     private authService: AuthenticationService,
+    private globalMethods: GlobalMethodsService,
     private router: Router,
     private formBuilder: FormBuilder,
     public loadingController: LoadingController,
@@ -58,38 +60,45 @@ export class LoginPage implements OnInit {
     return loading;
   }
 
-  // async onLogi1n() {
-  //   if (this.loginForm.valid) {
+  async onLogi1n() {
+    const loading = await this.presentLoading();
+    try {
+      if (this.loginForm.valid) {
 
-  //     const loading = await this.presentLoading();
+        const postData = {
+          // Username: this.globalMethodsService.encryptData(this.FormData.controls['username'].value),
+          // Password: this.globalMethodsService.encryptData(this.FormData.controls['Password'].value),
+          Username: this.loginForm.controls['username'].value,
+          Password: this.loginForm.controls['password'].value
+        };
 
-  //     const postData = {
-  //       // Username: this.globalMethodsService.encryptData(this.FormData.controls['username'].value),
-  //       // Password: this.globalMethodsService.encryptData(this.FormData.controls['Password'].value),
-  //       Username: this.loginForm.controls['username'].value,
-  //       Password: this.loginForm.controls['Password'].value
-  //     };
-
-  //     // Call the login method of AuthService
-  //     this.authService.UserLogin(postData).subscribe(
-  //       (response) => {
-  //         if (response && response.token) {
-  //           // Store the token or any user data for later use
-  //           this.authService.storeUserData(response);
-  //           console.log('Login successful');
-  //           this.router.navigate(['/home']); // Navigate to home page on successful login
-  //         } else {
-  //           console.log('Invalid credentials');
-  //           alert('Invalid username or password');
-  //         }
-  //       },
-  //       (error) => {
-  //         console.log('Error:', error);
-  //         alert('An error occurred. Please try again later.');
-  //       }
-  //     );
-  //   } else {
-  //     alert('Please fill in all the fields.');
-  //   }
-  // }
+        // Call the login method of AuthService
+        this.authService.mockUserLogin(postData).subscribe((response) => {
+          loading.dismiss();
+          console.log("login resp: ", response)
+          if (response.code === '200') {
+            // Store the token or any user data for later use
+            this.authService.storeUserData(response);
+            console.log('Login successful');
+            this.router.navigate(['/home']); // Navigate to home page on successful login
+          } else {
+            console.log('Invalid credentials');
+            alert('Invalid username or password');
+          }
+        },
+          (error) => {
+            console.log('Error:', error);
+            alert('An error occurred. Please try again later.');
+          }
+        );
+      } else {
+        alert('Please fill in all the fields.');
+      }
+    } catch (error) {
+      //TODO Present alert
+      loading.dismiss()
+      console.error(error)
+      this.globalMethods.presentAlert("Exception", "An unknown error occured")
+    }
+  }
 }

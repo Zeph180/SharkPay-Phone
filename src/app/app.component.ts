@@ -20,12 +20,12 @@ export class AppComponent {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   showMenu = true; // Flag to control menu visibility
 
-  // constructor(private router: Router) {
-  //   // Subscribe to route changes
-  //   this.router.events.subscribe(() => {
-  //     // Hide the menu on the login page
-  //     this.showMenu = !this.router.url.includes('/login');
-  //     console.log(this.showMenu)
-  //   });
-  // }
+  constructor(private router: Router) {
+    // Subscribe to route changes
+    this.router.events.subscribe(() => {
+      // Hide the menu on the login page
+      this.showMenu = !this.router.url.includes('/login');
+      console.log(this.showMenu)
+    });
+  }
 }

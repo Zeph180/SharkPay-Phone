@@ -3,7 +3,7 @@
     <div style="width: 60%; height: 50px; display: flex; justify-content: center; align-items: center;">
       <ion-img style="width: 100%; height: 100%; object-fit: contain;" class="imageDiv2" src="../../assets/images/sharkLogo.PNG"></ion-img>
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" style="width: 70%;">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogi1n()" style="width: 70%;">
         <!-- <ion-input [(ngModel)]="username" name="username" type="text" required></ion-input> -->
         <!-- <ion-input [(ngModel)]="username" name="username" required label="Username" label-placement="floating" fill="outline" placeholder="Enter username"></ion-input>
         <br /> -->
@@ -37,7 +37,7 @@
           </ion-item>
           <br />
         </ion-list>
-      <ion-button expand="full" type="submit" [disabled]="!username || !password">
+      <ion-button expand="full" type="submit" [disabled]="!loginForm.valid">
         Login
       </ion-button>
     </form>

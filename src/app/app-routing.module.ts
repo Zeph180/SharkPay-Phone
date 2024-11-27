@@ -66,7 +66,11 @@ const routes: Routes = [
   {
     path: 'pay-float',
     loadChildren: () => import('./pay-float/pay-float.module').then(m => m.PayFloatPageModule)
+  },  {
+    path: 'reset-paassword',
+    loadChildren: () => import('./reset-paassword/reset-paassword.module').then( m => m.ResetPaasswordPageModule)
   }
+
 ];
 
 @NgModule({
