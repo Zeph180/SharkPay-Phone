@@ -78,9 +78,19 @@ export class LoginPage implements OnInit {
           console.log("login resp: ", response)
           if (response.code === '200') {
             // Store the token or any user data for later use
-            this.authService.storeUserData(response);
-            console.log('Login successful');
-            this.router.navigate(['/home']); // Navigate to home page on successful login
+            this.authService.storeUserData('accessToken', response.accessToken.accessToken);
+            this.authService.storeUserData('user', JSON.stringify(response.user));
+            this.authService.storeUserData('accounts', JSON.stringify(response.accounts));
+
+            //CONDITIONALLY NAVIGATE
+            if (response.user.ispasswordChangeRequired === 'True') {
+              this.router.navigate(['/reset-paassword']);
+            }
+            else {
+              // Navigate to home page on successful login
+              this.router.navigate(['/home']);
+            }
+
           } else {
             console.log('Invalid credentials');
             alert('Invalid username or password');

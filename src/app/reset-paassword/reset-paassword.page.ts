@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reset-paassword',
@@ -6,10 +7,22 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./reset-paassword.page.scss'],
 })
 export class ResetPaasswordPage implements OnInit {
+  resetPasswordForm: FormGroup;
 
-  constructor() { }
+  constructor(
+    private formBuilder: FormBuilder,
+
+  ) {
+    this.resetPasswordForm = this.formBuilder.group({
+      oldPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit() {
   }
 
+  resetPassword() {
+
+  }
 }

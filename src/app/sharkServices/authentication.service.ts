@@ -53,7 +53,7 @@ export class AuthenticationService {
         "lastloginDate": "",
         "userId": "12",
         "transactionLimit": "10000000",
-        "ispasswordChangeRequired": "True"
+        "ispasswordChangeRequired": "False"
       },
       "accounts": [
         {
@@ -78,8 +78,8 @@ export class AuthenticationService {
   }
 
   // Optionally, a method to store the token or user session after login
-  storeUserData(data: any) {
-    localStorage.setItem('userToken', data.token);
+  storeUserData(key: string, data: any) {
+    localStorage.setItem(key, data);
   }
 
   logout() {

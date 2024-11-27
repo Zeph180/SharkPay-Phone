@@ -141,7 +141,7 @@ export class PayUraPage implements OnInit {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
-            if (resp.CODE == '1000') {
+            if (resp.CODE == '200') {
               this.presentAlert('Success', 'Transaction completed')
               const navigationExtras: NavigationExtras = {
                 queryParams: {
