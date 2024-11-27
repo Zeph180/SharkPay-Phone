@@ -73,7 +73,7 @@ export class LoginPage implements OnInit {
         };
 
         // Call the login method of AuthService
-        this.authService.mockUserLogin(postData).subscribe((response) => {
+        this.authService.UserLogin(postData).subscribe((response) => {
           loading.dismiss();
           console.log("login resp: ", response)
           if (response.code === '200') {
@@ -82,14 +82,16 @@ export class LoginPage implements OnInit {
             this.authService.storeUserData('user', JSON.stringify(response.user));
             this.authService.storeUserData('accounts', JSON.stringify(response.accounts));
 
-            //CONDITIONALLY NAVIGATE
-            if (response.user.ispasswordChangeRequired === 'True') {
-              this.router.navigate(['/reset-paassword']);
-            }
-            else {
-              // Navigate to home page on successful login
-              this.router.navigate(['/home']);
-            }
+            this.router.navigate(['/home']);
+
+            //TODO CONDITIONALLY NAVIGATE
+            // if (response.user.ispasswordChangeRequired === 'True') {
+            //   this.router.navigate(['/reset-paassword']);
+            // }
+            // else {
+            //   // Navigate to home page on successful login
+            //   this.router.navigate(['/home']);
+            // }
 
           } else {
             console.log('Invalid credentials');
@@ -98,6 +100,7 @@ export class LoginPage implements OnInit {
         },
           (error) => {
             console.log('Error:', error);
+            loading.dismiss();
             alert('An error occurred. Please try again later.');
           }
         );

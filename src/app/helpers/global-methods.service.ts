@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,7 @@ export class GlobalMethodsService {
 
   constructor(
     private alertController: AlertController,
+    private loadingController: LoadingController
   ) { }
 
   async presentAlert(headerText: string, message: string) {
@@ -20,6 +21,20 @@ export class GlobalMethodsService {
     });
 
     await alert.present();
+  }
+
+  async presentLoading(message: string = 'Please wait...') {
+    const loading = await this.loadingController.create({
+      message,
+      translucent: true,
+      cssClass: 'my-custom-loader',
+      backdropDismiss: true,
+      spinner: 'lines-sharp',
+      animated: true,
+    });
+
+    await loading.present();
+    return loading;
   }
 
   getUserData<T>(key: string): T | null {

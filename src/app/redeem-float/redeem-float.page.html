@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Redeem Float</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="FormData" (ngSubmit)="redeemCommission()" style="margin-top: 20px;">
+    <ion-item>
+      <ion-input
+        formControlName="amount"
+        label="Amount"
+        type="number"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter amount"
+      ></ion-input>
+    </ion-item>
+    <br />
+
+    <ion-button expand="block" type="submit" [disabled]="FormData.invalid">
+      Submit Payment
+    </ion-button>
+  </form>
+</ion-content>

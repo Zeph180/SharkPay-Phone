@@ -2,15 +2,11 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   redirectTo: '',
-  //   pathMatch: 'full'
-  // },
-  // {
-  //   path: 'folder/:id',
-  //   loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  // },
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
@@ -24,7 +20,7 @@ const routes: Routes = [
     loadChildren: () => import('./print/print.module').then(m => m.PrintPageModule)
   },
   {
-    path: '',
+    path: 'login',
     loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule)
   },
   {
@@ -66,9 +62,18 @@ const routes: Routes = [
   {
     path: 'pay-float',
     loadChildren: () => import('./pay-float/pay-float.module').then(m => m.PayFloatPageModule)
-  },  {
+  },
+  {
     path: 'reset-paassword',
     loadChildren: () => import('./reset-paassword/reset-paassword.module').then( m => m.ResetPaasswordPageModule)
+  },
+  {
+    path: 'transfer-float',
+    loadChildren: () => import('./transfer-float/transfer-float.module').then(m => m.TransferFloatPageModule)
+  },
+  {
+    path: 'redeem-float',
+    loadChildren: () => import('./redeem-float/redeem-float.module').then(m => m.RedeemFloatPageModule)
   }
 
 ];

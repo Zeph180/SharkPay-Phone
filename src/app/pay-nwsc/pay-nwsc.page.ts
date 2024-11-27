@@ -73,15 +73,15 @@ export class PayNWSCPage implements OnInit {
     await alert.present();
   }
 
-  async queryNWSC(prn: string) {
+  async queryNWSC(meterNO: string) {
+    const loading = await this.presentLoading();
+
     try {
       if (this.payNWSCForm.controls['meterNumber'].valid) {
         this.queryData = {
-          prn,
+          meterNO,
           requestedBy: ""
         }
-
-        const loading = await this.presentLoading();
 
         this.finance.PostData(this.queryData, "/QueryNWSC").subscribe(
           (data) => {
@@ -99,14 +99,47 @@ export class PayNWSCPage implements OnInit {
         )
       }
     } catch (error) {
+      loading.dismiss()
+      this.presentAlert('Exception', 'An unknown error occured')
+    }
+  }
+
+  async queryNWSCAreas(meterNO: string) {
+    const loading = await this.presentLoading();
+
+    try {
+      if (this.payNWSCForm.controls['meterNumber'].valid) {
+        this.queryData = {
+          meterNO,
+          requestedBy: ""
+        }
+
+        this.finance.PostData(this.queryData, "/QueryAreas").subscribe(
+          (data) => {
+            const s = JSON.stringify(data);
+            const resp = JSON.parse(s);
+            loading.dismiss();
+            if (resp.CODE == '1000') {
+              this.meterValidated = true;
+              //TODO Populate non editable values got from api
+            }
+            else {
+
+            }
+          }
+        )
+      }
+    } catch (error) {
+      loading.dismiss()
       this.presentAlert('Exception', 'An unknown error occured')
     }
   }
 
   async payNWSC() {
+    const loading = await this.presentLoading();
+
     try {
       if (this.payNWSCForm.valid) {
-        const loading = await this.presentLoading();
 
         this.transactionData = {
           accountToDebit: this.payNWSCForm.controls['account'].value,
@@ -148,6 +181,7 @@ export class PayNWSCPage implements OnInit {
       }
     }
     catch {
+      loading.dismiss()
       this.presentAlert('Exception', 'An unknown error occured')
     }
   }

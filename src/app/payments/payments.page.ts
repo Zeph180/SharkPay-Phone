@@ -12,8 +12,8 @@ export class PaymentsPage implements OnInit {
     { title: 'Pay URA', icon: 'receipt', page: '/pay-ura' },
     { title: 'Electricity', icon: 'flash', page: '/pay-umeme' },
     { title: 'Airtime', icon: 'wifi', page: '/pay-airtime' },
-    { title: 'Pay TV', icon: 'tv', page: '/pay-tv' },
-    { title: 'School Fees', icon: 'school', page: '/pay-school' },
+    { title: 'Redeem Commission', icon: 'tv', page: '/redeem-float' },
+    { title: 'Transfer Float', icon: 'school', page: '/transfer-float' },
   ];
 
   constructor(private router: Router) { }

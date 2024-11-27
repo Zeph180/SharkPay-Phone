@@ -4,7 +4,24 @@ import { FinanceService } from '../sharkServices/finance.service';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { GlobalMethodsService } from '../helpers/global-methods.service';
 
+
+interface User {
+  names: string;
+  email: string;
+  role: string;
+  roleId: string;
+  customerId: string;
+  customerName: string;
+  userType: string;
+  userTypeId: string;
+  username: string;
+  lastloginDate: string;
+  userId: string;
+  transactionLimit: string;
+  ispasswordChangeRequired: string;
+}
 
 @Component({
   selector: 'app-pay-ura',
@@ -22,12 +39,29 @@ export class PayUraPage implements OnInit {
     { accNo: '147852' },
   ];
 
+  public user: User = {
+    names: '',
+    email: '',
+    role: '',
+    roleId: '',
+    customerId: '',
+    customerName: '',
+    userType: '',
+    userTypeId: '',
+    username: '',
+    lastloginDate: '',
+    userId: '',
+    transactionLimit: '',
+    ispasswordChangeRequired: ''
+  };
+
   constructor(
     private fb: FormBuilder,
     private finance: FinanceService,
     public loadingController: LoadingController,
     private alertController: AlertController,
     public navCtrl: NavController,
+    private globalMethods: GlobalMethodsService
   ) {
     this.FormData = this.fb.group({
       account: ['', [Validators.required]],
@@ -42,6 +76,22 @@ export class PayUraPage implements OnInit {
       customerID: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    this.user = this.globalMethods.getUserData<User>('user') || {
+      names: '',
+      email: '',
+      role: '',
+      roleId: '',
+      customerId: '',
+      customerName: '',
+      userType: '',
+      userTypeId: '',
+      username: '',
+      lastloginDate: '',
+      userId: '',
+      transactionLimit: '',
+      ispasswordChangeRequired: ''
+    };
   }
 
   ngOnInit() {
@@ -58,70 +108,65 @@ export class PayUraPage implements OnInit {
     }
   }
 
-  async presentLoading(message: string = 'Please wait...') {
-    const loading = await this.loadingController.create({
-      message,
-      translucent: true,
-      cssClass: 'my-custom-loader',
-      backdropDismiss: true,
-      spinner: 'lines-sharp',
-      animated: true,
-    });
-    await loading.present();
-    return loading;
-  }
-
-  async presentAlert(headerText: string, message: string) {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: headerText,
-      message: message,
-      buttons: ['Dismiss'],
-      animated: true,
-    });
-
-    await alert.present();
-  }
-
-
   hasError(controlName: string, errorName: string): boolean {
     return this.FormData.controls[controlName].hasError(errorName);
   }
 
+
   async queryPRN(prn: string) {
+    const loading = await this.globalMethods.presentLoading()
     try {
       if (this.FormData.controls['Prn'].valid) {
         this.queryData = {
           prn,
-          requestedBy: ""
+          requestedBy: this.user.customerId
         }
-
-        const loading = await this.presentLoading();
 
         this.finance.PostData(this.queryData, "/QueryURA").subscribe(
           (data) => {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
-            loading.dismiss();
-            if (resp.CODE == '1000') {
+            loading.dismiss()
+            if (resp.CODE == '200') {
+            //   {
+            //     "status": "SUCCESS",
+            //     "code": "200",
+            //     "message": null,
+            //     "details": {
+            //         "prn": "2250006676819",
+            //         "taxpayername": "",
+            //         "amount": "",
+            //         "tin": "",
+            //         "prnStatus": "n",
+            //         "statusDesc": "invalid prn",
+            //         "charges": "0"
+            //     }
+            // }
               this.prnValidated = true;
               this.FormData.controls['tin'].setValue(resp.MESSAGE);
+              this.FormData.controls['prnStatus'].setValue(resp.details.statusDesc);
+              this.FormData.controls['payerName'].setValue(resp.details.taxpayername);
+              this.FormData.controls['amount'].setValue(resp.details.amount);
+              this.FormData.controls['tin'].setValue(resp.details.tin);
+              this.FormData.controls['charges'].setValue(resp.details.charges);
+              this.FormData.controls['prnStatus'].setValue(resp.details.prnStatus);
             }
             else {
-
+              this.globalMethods.presentAlert('Error', resp.message)
             }
           }
         )
       }
     } catch (error) {
-      this.presentAlert('Exception', 'An unknown error occured')
+      this.globalMethods.presentAlert('Exception', 'An unknown error occured')
     }
   }
 
   async payPRN() {
+    const loading = await this.globalMethods.presentLoading();
+
     try {
       if (this.FormData.valid) {
-        const loading = await this.presentLoading();
 
         this.transactionData = {
           accountToDebit: this.FormData.controls['account'].value,
@@ -142,7 +187,7 @@ export class PayUraPage implements OnInit {
             const resp = JSON.parse(s);
             loading.dismiss();
             if (resp.CODE == '200') {
-              this.presentAlert('Success', 'Transaction completed')
+              this.globalMethods.presentAlert('Success', 'Transaction completed')
               const navigationExtras: NavigationExtras = {
                 queryParams: {
                   special: JSON.stringify(this.transactionData),
@@ -156,14 +201,15 @@ export class PayUraPage implements OnInit {
 
             }
             else {
-              this.presentAlert('Failed', 'Transaction failed')
+              this.globalMethods.presentAlert('Failed', 'Transaction failed')
             }
           }
         )
       }
     }
     catch {
-      this.presentAlert('Exception', 'An unknown error occured')
+      loading.dismiss()
+      this.globalMethods.presentAlert('Exception', 'An unknown error occured')
     }
   }
 }

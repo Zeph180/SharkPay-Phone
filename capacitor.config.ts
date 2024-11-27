@@ -7,6 +7,9 @@ const config: CapacitorConfig = {
   plugins: {
     nexgosdk: {
       // Add plugin-specific configurations if required
+    },
+    LocalNetwork: {
+      "cleartextTrafficPermitted": true
     }
   }
 };
