@@ -9,8 +9,11 @@ const config: CapacitorConfig = {
       // Add plugin-specific configurations if required
     },
     LocalNetwork: {
-      "cleartextTrafficPermitted": true
-    }
+      cleartextTrafficPermitted: true
+    },
+    CapacitorHttp: {
+      enabled: true,
+    },
   }
 };
 

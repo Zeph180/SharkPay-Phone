@@ -19,6 +19,7 @@ export class FinanceService {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'Signature': signature,
+        'Access-Control-Allow-Origin': '*'
       }),
     };
 

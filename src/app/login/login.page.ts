@@ -66,12 +66,12 @@ export class LoginPage implements OnInit {
       if (this.loginForm.valid) {
 
         const postData = {
-          // Username: this.globalMethodsService.encryptData(this.FormData.controls['username'].value),
-          // Password: this.globalMethodsService.encryptData(this.FormData.controls['Password'].value),
-          Username: this.loginForm.controls['username'].value,
-          Password: this.loginForm.controls['password'].value
+          username: this.loginForm.controls['username'].value,
+          password: this.loginForm.controls['password'].value.toString(),
+          device: "device-identifier"
         };
 
+        console.log("Logindata: ", postData)
         // Call the login method of AuthService
         this.authService.UserLogin(postData).subscribe((response) => {
           loading.dismiss();

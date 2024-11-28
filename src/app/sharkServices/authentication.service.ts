@@ -9,20 +9,21 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private apiUrl = apiUrl + 'UserAuthentication/';
+  private apiUrl = apiUrl + 'authentication/';
 
   constructor(
     private httpClient: HttpClient,
     private router: Router) { }
 
   UserLogin(formData: any): Observable<any> {
-    const apiUrl = this.apiUrl + 'login';
+    const apiUrl = this.apiUrl + 'userauthentication';
     const httpOptions = {
       headers: new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
       }),
     };
+
     const res = this.httpClient
       .post(apiUrl, formData, httpOptions)
       .pipe(map((result: any) => result));
