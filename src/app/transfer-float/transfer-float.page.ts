@@ -106,36 +106,49 @@ export class TransferFloatPage implements OnInit {
           accountToDebit: floatAccountNumber,
           accountToCredit: this.FormData.controls['acc2Credit'].value,
           amount: this.FormData.controls['amount'].value,
-          modeOfPayment: this.FormData.controls['prnStatus'].value,
+          modeOfPayment: "Cash",
           transactionType: "",
           transferedBy: this.user.customerId,
           remarks: this.FormData.controls['remarks'].value,
         }
 
-        this.finance.PostData(this.transactionData, "/TransferFloat").subscribe(
-          (data) => {
-            const s = JSON.stringify(data);
-            const resp = JSON.parse(s);
+        console.log("Transferfloat Data:", this.transactionData)
+
+        this.finance.PostData(this.transactionData, "TransferFloat").subscribe({
+          next: (data) => {
+            try {
+              const s = JSON.stringify(data);
+              const resp = JSON.parse(s);
+              loading.dismiss();
+              if (resp.CODE == '200') {
+                this.globalMethods.presentAlert('Success', 'Transaction completed')
+                const navigationExtras: NavigationExtras = {
+                  queryParams: {
+                    special: JSON.stringify(this.transactionData),
+                  },
+                };
+
+                this.navCtrl.navigateForward('print', navigationExtras);
+              }
+              else {
+                this.globalMethods.presentAlert('Failed', 'Transaction failed')
+              }
+            } catch (parseError) {
+              console.log("Transfer float error:", parseError)
+              this.globalMethods.presentAlert("Error", "Unable to process server response");
+            } finally {
+              loading.dismiss();
+            }
+          },
+          error: (error) => {
+            console.error("Query PRN error:", error);
+            this.globalMethods.presentAlert(
+              "Error",
+              error.message || "Network request failed"
+            );
             loading.dismiss();
-            if (resp.CODE == '200') {
-              this.globalMethods.presentAlert('Success', 'Transaction completed')
-              const navigationExtras: NavigationExtras = {
-                queryParams: {
-                  special: JSON.stringify(this.transactionData),
-                },
-              };
-
-              this.navCtrl.navigateForward('print', navigationExtras);
-            }
-            //TODO Check session and logout
-            else if (resp.code === '1002') {
-
-            }
-            else {
-              this.globalMethods.presentAlert('Failed', 'Transaction failed')
-            }
           }
-        )
+        })
       }
     }
     catch {
