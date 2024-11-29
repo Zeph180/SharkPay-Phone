@@ -62,6 +62,7 @@ export class RedeemFloatPage implements OnInit {
   ) {
     this.FormData = this.fb.group({
       amount: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      remarks: ['', Validators.required],
     });
 
     this.accounts = this.globalMethods.getUserData<{
@@ -95,7 +96,11 @@ export class RedeemFloatPage implements OnInit {
   async redeemCommission() {
     const loading = await this.globalMethods.presentLoading();
     try {
-      if (this.FormData.valid) {
+      if (this.FormData.invalid) {
+        this.globalMethods.presentAlert("Error", "All values are required");
+        loading.dismiss();
+        return;
+      }
         const floatAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || null;
         const commissionAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || null;
 
@@ -107,8 +112,9 @@ export class RedeemFloatPage implements OnInit {
           remarks: this.FormData.controls['remarks'].value,
         }
 
-        this.finance.PostData(this.transactionData, "/RedeemCommission").subscribe(
-          (data) => {
+      this.finance.PostData(this.transactionData, "RedeemCommission").subscribe({
+        next: (data) => {
+          try {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
@@ -130,8 +136,22 @@ export class RedeemFloatPage implements OnInit {
               this.globalMethods.presentAlert('Failed', 'Transaction failed')
             }
           }
-        )
-      }
+          catch (error) {
+            console.error("Exception in queryPRN:", error);
+            this.globalMethods.presentAlert("Exception", "Unexpected error occurred");
+            loading.dismiss();
+          }
+        },
+        error: (error) => {
+          console.error("Query PRN error:", error);
+          this.globalMethods.presentAlert(
+            "Error",
+            error.message || "Network request failed"
+          );
+          loading.dismiss();
+        }
+      })
+
     }
     catch {
       loading.dismiss()
