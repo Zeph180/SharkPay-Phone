@@ -1,24 +1,46 @@
 import { Injectable } from '@angular/core';
-import { CanActivate } from '@angular/router';
-import { Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { GlobalMethodsService } from '../helpers/global-methods.service';
 
 @Injectable({
     providedIn: 'root'
 })
-
 export class AuthGuard implements CanActivate {
+    constructor(
+        private router: Router,
+        private globalMethods: GlobalMethodsService
+    ) { }
 
-    constructor(private router: Router) { }
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        const token = localStorage.getItem('accessToken');
 
-    canActivate(): boolean {
-        const token = localStorage.getItem('userToken');
-        if (token) {
-            console.log("Auhtgaurd")
-            return true; // If there's a token, allow access
+        if (this.isTokenValid(token)) {
+            return true;
         } else {
-            console.log("Auhtgaurd")
-            this.router.navigate(['/login']);
-            return false; // If no token, redirect to login page
+            this.globalMethods.logout(this.router);
+            return false;
+        }
+    }
+
+    private isTokenValid(token: string | null): boolean {
+        if (!token) return false;
+
+        try {
+            //JWT token expiration check
+            const tokenPayload = this.decodeToken(token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            return tokenPayload && tokenPayload.exp > currentTime;
+        } catch (error) {
+            console.error('Token validation error:', error);
+            return false;
+        }
+    }
+
+    private decodeToken(token: string): any {
+        try {
+            return JSON.parse(atob(token.split('.')[1]));
+        } catch {
+            return null;
         }
     }
 }

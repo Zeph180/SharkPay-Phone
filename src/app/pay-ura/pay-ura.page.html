@@ -15,7 +15,7 @@
       <ion-input
         formControlName="prn"
         label="PRN"
-        type="text"
+        type="number"
         label-placement="floating"
         fill="outline"
         placeholder="Enter prn"
@@ -32,23 +32,6 @@
     </ion-button>
 
     <div *ngIf="prnValidated">
-      <ion-item>
-        <ion-select
-          formControlName="account"
-          placeholder="Select debit account"
-          label-placement="floating"
-          fill="outline"
-          label="Account">
-          <ion-select-option *ngFor="let account of accounts" [value]="account.accNo">
-            {{ account.accNo }}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-text color="danger" *ngIf="hasError('Account', 'required')">
-        Account is required
-      </ion-text>
-      <br />
-
             <!-- PRN STATUS -->
             <ion-item>
               <ion-input
@@ -72,6 +55,7 @@
           label-placement="floating"
           fill="outline"
           placeholder="Enter Payer Name"
+          readonly="true"
         ></ion-input>
       </ion-item>
       <br />
@@ -99,7 +83,6 @@
           label-placement="floating"
           fill="outline"
           placeholder="Enter Tax Identification Number"
-          readonly="true"
         ></ion-input>
       </ion-item>
       <br />
@@ -119,33 +102,8 @@
 
       <ion-item>
         <ion-input
-          formControlName="initiator"
-          label="Initiated By"
-          type="text"
-          label-placement="floating"
-          fill="outline"
-          placeholder="Initiated by"
-          readonly="true"
-        ></ion-input>
-      </ion-item>
-      <br />
-
-      <ion-item>
-        <ion-input
           formControlName="source"
           label="Source"
-          type="text"
-          label-placement="floating"
-          fill="outline"
-          placeholder=""
-        ></ion-input>
-      </ion-item>
-      <br />
-
-      <ion-item>
-        <ion-input
-          formControlName="customerID"
-          label="customerID"
           type="text"
           label-placement="floating"
           fill="outline"

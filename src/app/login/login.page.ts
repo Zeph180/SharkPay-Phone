@@ -114,4 +114,6 @@ export class LoginPage implements OnInit {
       this.globalMethods.presentAlert("Exception", "An unknown error occured")
     }
   }
+
+
 }
