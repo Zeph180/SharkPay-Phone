@@ -76,7 +76,11 @@ const routes: Routes = [
   {
     path: 'redeem-float',
     loadChildren: () => import('./redeem-float/redeem-float.module').then(m => m.RedeemFloatPageModule)
+  },  {
+    path: 'commission-transactions',
+    loadChildren: () => import('./commission-transactions/commission-transactions.module').then( m => m.CommissionTransactionsPageModule)
   }
+
 
 ];
 

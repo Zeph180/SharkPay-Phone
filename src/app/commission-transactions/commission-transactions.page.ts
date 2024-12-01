@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
 import { FinanceService } from '../sharkServices/finance.service';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-transactions',
-  templateUrl: './transactions.page.html',
-  styleUrls: ['./transactions.page.scss'],
+  selector: 'app-commission-transactions',
+  templateUrl: './commission-transactions.page.html',
+  styleUrls: ['./commission-transactions.page.scss'],
 })
-export class TransactionsPage implements OnInit {
+export class CommissionTransactionsPage implements OnInit {
   public transactions: {
     transactionID: string;
     account: string;
@@ -28,36 +27,32 @@ export class TransactionsPage implements OnInit {
     customerName: string;
     transferedByName: string;
   }[] = [];
-  public filteredTransactions: any[] = [];
-  public categories: string[] = ['All', 'Credit', 'Debit'];
-  public selectedCategory: string = 'All';
+
 
   constructor(
     public globalMethods: GlobalMethodsService,
-    public finance: FinanceService,
-    public router: Router
+    public finance: FinanceService
   ) { }
 
   ngOnInit() {
-    this.queryTransactions();
   }
 
-  async queryTransactions() {
+  async queryCommissionTransactions() {
     const queryData = {
       transactionID: "",
-      product: "",
+      mode: "",
       status: "",
       postedBy: "",
       dateFrom: "",
       dateTo: "",
       customer: "",
-      createdBy: ""
+      createdBy: "",
     }
 
     const loading = await this.globalMethods.presentLoading(); // Show a loading spinner
     try {
       // Fetch data from the backend
-      this.finance.PostData(queryData, 'getfilteredtransactions').subscribe({
+      this.finance.PostData(queryData, 'getFilteredCommissionTransactions').subscribe({
         next: (data) => {
           console.log('API Response:', data);
 
@@ -81,7 +76,6 @@ export class TransactionsPage implements OnInit {
 
           // Assign transactions to the local property
           this.transactions = data.transactions;
-          this.filteredTransactions = [...this.transactions];
           console.log('Retrieved Transactions:', this.transactions);
         },
         error: (error) => {
@@ -101,29 +95,5 @@ export class TransactionsPage implements OnInit {
     } finally {
       loading.dismiss(); // Dismiss the loading spinner in all cases
     }
-  }
-
-  // Filter transactions based on category
-  filterTransactions(category: string) {
-    this.selectedCategory = category;
-
-    if (category === 'All') {
-      this.filteredTransactions = [...this.transactions];
-    } else if (category === 'Credit') {
-      this.filteredTransactions = this.transactions.filter(
-        (transaction) => transaction.transType.toUpperCase() === 'CREDIT'
-      );
-    } else if (category === 'Debit') {
-      this.filteredTransactions = this.transactions.filter(
-        (transaction) => transaction.transType.toUpperCase() === 'DEBIT'
-      );
-    }
-  }
-
-  goToPrintPage(transaction: any) {
-    // Navigate to the PrintPage and pass the transaction as a query parameter
-    this.router.navigate(['/print'], {
-      queryParams: { transaction: JSON.stringify(transaction) },
-    });
   }
 }

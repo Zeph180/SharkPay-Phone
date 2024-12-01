@@ -1,36 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Transactions</ion-title>
+    <ion-title>commissionTransactions</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Category Buttons -->
-  <div class="category-buttons" slot="fixed">
-    <ion-buttons>
-      <ion-button
-        size="small"
-        *ngFor="let category of categories"
-        [color]="selectedCategory === category ? 'primary' : 'medium'"
-        (click)="filterTransactions(category)"
-      >
-        {{ category }}
-      </ion-button>
-    </ion-buttons>
-  </div>
-
-  <ion-list style="margin-top: 30px;">
-    <ion-item
-      *ngFor="let transaction of filteredTransactions"
-      lines="full"
-      (click)="goToPrintPage(transaction)"
-      >
+  <ion-list>
+    <ion-item *ngFor="let transaction of transactions" lines="full">
       <!-- Transaction Details -->
       <ion-label class="ion-text-wrap">
-        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'">
+        <ion-text [color]="transaction.transType === 'credit' ? 'success' : 'danger'">
           <h2>{{ transaction.transType }}</h2>
         </ion-text>
         <div style="display: flex; ">
@@ -51,7 +30,7 @@
       >
         <ion-text color="primary">{{ transaction.amount }}</ion-text>
         <br />
-        <ion-text>{{ transaction.transactionID }} <br /> {{transaction.product}}</ion-text>
+        <ion-text>{{ transaction.transactionID }}</ion-text>
       </ion-label>
     </ion-item>
   </ion-list>

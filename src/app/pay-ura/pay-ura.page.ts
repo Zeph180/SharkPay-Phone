@@ -33,6 +33,7 @@ export class PayUraPage implements OnInit {
   queryData: object = {}
   transactionData: object = {}
   prnValidated: boolean = false;
+
   public accounts: {
     accountNumber: string,
     balance: string,
@@ -191,6 +192,34 @@ export class PayUraPage implements OnInit {
     try {
       if (this.FormData.valid) {
         const floatAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || null;
+
+        const floatAccount = this.accounts.find(account =>
+          account.accountName.toLowerCase() === "float account"
+        );
+
+        const floatAccountBalance = floatAccount ? floatAccount.balance : null;
+
+        // Validate transaction amount
+        const transactionAmount = this.FormData.controls['amount'].value;
+
+        // Check for insufficient funds
+        if (floatAccountBalance === null) {
+          loading.dismiss();
+          this.globalMethods.presentAlert("Error", "Float account not found");
+          return;
+        }
+
+        if (transactionAmount > floatAccountBalance) {
+          loading.dismiss();
+          this.globalMethods.presentAlert("Error", "Insufficient funds");
+          return;
+        }
+        // Check transaction limit
+        if (transactionAmount > this.user.transactionLimit) {
+          loading.dismiss();
+          this.globalMethods.presentAlert("Error", "Amount exceeds your transaction limit");
+          return;
+        }
 
         this.transactionData = {
           accountToDebit: floatAccountNumber,
