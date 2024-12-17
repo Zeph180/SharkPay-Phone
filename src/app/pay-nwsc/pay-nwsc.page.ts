@@ -279,8 +279,8 @@ export class PayNWSCPage implements OnInit {
           name: this.payNWSCForm.controls['name'].value,
           phonenumber: this.payNWSCForm.controls['phoneNumber'].value,
           charges: this.payNWSCForm.controls['charges'].value,
-          initiatedBy: this.payNWSCForm.controls['initiator'].value,
-          source: this.payNWSCForm.controls['source'].value,
+          initiatedBy: this.user.userId,
+          source: "APP",
           customerID: this.payNWSCForm.controls['customerID'].value,
         }
 

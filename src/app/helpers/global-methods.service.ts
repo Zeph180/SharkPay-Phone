@@ -76,7 +76,7 @@ export class GlobalMethodsService {
 
       keysToRemove.forEach(key => localStorage.removeItem(key));
 
-      await this.presentAlert('Logged Out', 'You have been successfully logged out.');
+      await this.presentAlert('Logged Out', 'You have been logged out.');
 
       if (router) {
         router.navigate(['/login'], {
@@ -89,4 +89,8 @@ export class GlobalMethodsService {
     }
   }
 
+  getDate() {
+    const time = new Date();
+    return time.toLocaleDateString('en-GB');
+  }
 }

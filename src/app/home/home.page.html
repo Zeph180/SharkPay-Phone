@@ -8,17 +8,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- <ion-card class="wallet-card" *ngFor="let account of accounts">
-    <ion-card-content>
-      <div class="wallet-info">
-        <p>{{account.accountType}}</p>
-        <h3>{{account.accountNumber}}</h3>
-        <p>Account Balance</p>
-        <h2>{{account.balance}}</h2>
-      </div>
-    </ion-card-content>
-  </ion-card> -->
-
   <swiper-container
     [slidesPerView]="1.1"
     [spaceBetween]="10"
@@ -44,55 +33,84 @@
 </swiper-container>
 
  <!-- Popular Services -->
- <ion-text class="ion-padding">Popular Services</ion-text>
- <ion-card>
-  <ion-card-content>
-    <ion-grid>
-      <ion-row>
-        <ion-col
-          size="4"
-          *ngFor="let popular of popularServices"
-          class="ion-text-center service-item"
-        >
-          <ion-button
-            fill="clear"
-            class="service-btn"
-            style="margin: 0; padding: 0;"
-            routerDirection="root"
-            [routerLink]="[popular.route]"
-          >
-            <ion-icon [md]="popular.icon" size="large" style="color: white;"></ion-icon>
-          </ion-button>
-          <ion-text>{{ popular.title }}</ion-text>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card-content>
+<ion-text class="ion-padding">Popular Services</ion-text>
+<swiper-container
+[slidesPerView]="3"
+[spaceBetween]="5"
+[pagination]="true"
+class="mySwiper"
+>
+<swiper-slide     *ngFor="let popular of popularServices"   routerDirection="root"
+[routerLink]="[popular.route]">
+<ion-card
+class="wallet-card"
+style="width: 95%;"
+class="ion-text-center service-item"
+>
+<ion-card-content style="background-color: white;">
+  <ion-button
+  fill="clear"
+  class="service-btn"
+  style="margin: 0; padding: 0;"
+  routerDirection="root"
+  [routerLink]="[popular.route]"
+>
+<ion-icon [md]="popular.icon" size="large" style="color: white;"></ion-icon>
+</ion-button>
+<ion-text>{{ popular.title }}</ion-text>
+</ion-card-content>
 </ion-card>
+</swiper-slide>
+</swiper-container>
 
   <!-- SwApp Banner -->
   <ion-card class="banner-card">
     <ion-card-content>
       <div class="banner">
-        <h2>Shark Pay</h2>
-        <p>Send money to other Shark Pay Users. <br /> No Charges!</p>
+        <h4>SharkPay</h4>
+        <p>Send money to other SharkPay Users. <br /> No Charges!</p>
       </div>
     </ion-card-content>
   </ion-card>
 
   <!-- Commissions Section -->
-   <ion-text class="ion-padding">Commissions</ion-text>
-  <ion-card>
-    <ion-card-content>
-      <div class="scroll-container">
-        <ion-item *ngFor="let commission of commissions">
-          <ion-label>
-            <h2>{{ commission.amount }}</h2>
-            <p>Next Payout</p>
-          </ion-label>
-          <ion-note slot="end">{{ commission.date }}</ion-note>
-        </ion-item>
-      </div>
-    </ion-card-content>
-  </ion-card>
+  <ion-text class="ion-padding">Transactions</ion-text>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+  <ion-list  class="scrollable-list">
+    <ion-item
+      *ngFor="let transaction of transactions"
+      lines="full"
+      (click)="goToPrintPage(transaction)"
+      >
+      <!-- Transaction Details -->
+      <ion-label class="ion-text-wrap">
+        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'">
+          <h2>{{ transaction.transType }}</h2>
+        </ion-text>
+        <div style="display: flex; ">
+          <span style="background-color:rgb(219, 211, 211); border-radius: 50%; width: 50px; height: 50px; padding: 3.5%;">
+            <ion-icon name="checkmark-done-circle-outline" size="large" color="white"></ion-icon>
+          </span>
+
+          <p style="background-color: aliceblue; width: 70%; padding-inline: 10px; padding-top: 5%; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+            {{ transaction.transDate }}
+            <br />
+            {{transaction.product}}
+          </p>
+        </div>
+      </ion-label>
+
+      <!-- Transaction Amount -->
+      <ion-label
+      class="ion-text-wrap"
+      style="flex: 0 0 30%; text-align: right; padding: 5px;"
+      >
+        <ion-text color="primary">{{ transaction.amount }}</ion-text>
+        <!-- <br />
+        <ion-text>{{ transaction.transactionID }} <br /> {{transaction.product}}</ion-text> -->
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

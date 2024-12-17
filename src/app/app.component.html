@@ -2,10 +2,10 @@
   <ion-split-pane contentId="main-content" >
     <ion-menu contentId="main-content" type="overlay" *ngIf="showMenu">
       <div style="height: 15%;">
-        <ion-toolbar color="primary" style="margin-top: 20px; height: 100%;">
+        <ion-toolbar color="primary" style="padding: 15px; height: 100%;">
           <ion-text class="center-text">
-            <ion-title>CARAVAN INTERNATIONAL LTD</ion-title>
-            <p>256771368257</p>
+            <ion-title>{{ user.names }}</ion-title>
+            <p>{{floatAccountNumber}}</p>
           </ion-text>
         </ion-toolbar>
       </div>
@@ -14,10 +14,15 @@
         <ion-list id="inbox-list">
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              <ion-icon aria-hidden="true" slot="start" [md]="p.icon + '-sharp'"></ion-icon>
               <ion-label>{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
+
+          <ion-button expand="block" (click)="logOut()">
+            <ion-icon aria-hidden="true"  slot="start" name="logout"></ion-icon>
+            logout
+          </ion-button>
         </ion-list>
       </ion-content>
     </ion-menu>

@@ -33,6 +33,28 @@ export class PayUraPage implements OnInit {
   queryData: object = {}
   transactionData: object = {}
   prnValidated: boolean = false;
+  deviceId: string = "";
+  details: {
+    prn: string;
+    taxpayername: string;
+    amount: string;
+    tin: string;
+    prnStatus: string;
+    statusDesc: string;
+    charges: string;
+    commission: string;
+    productId: string
+  } = {
+      prn: '',
+      taxpayername: '',
+      amount: '0',
+      tin: '',
+      prnStatus: '',
+      statusDesc: '',
+      charges: '0',
+      commission: '',
+      productId: ''
+    };
 
   public accounts: {
     accountNumber: string,
@@ -72,9 +94,10 @@ export class PayUraPage implements OnInit {
       amount: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       charges: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       payerName: ['', Validators.required],
-      source: ['', Validators.required],
       prnStatus: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      phone: ['', [Validators.minLength(10), Validators.maxLength(13)]],
+      commission: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     });
 
     this.user = this.globalMethods.getUserData<User>('user') || {
@@ -100,6 +123,8 @@ export class PayUraPage implements OnInit {
       accountTypeId: string;
       accountType: string;
     }[]>('accounts') || [];
+
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || ''
   }
 
   ngOnInit() {
@@ -129,8 +154,21 @@ export class PayUraPage implements OnInit {
       // Prepare query data
       this.queryData = {
         prn: prn.toString(),
-        requestedBy: this.user.customerId,
+        requestedBy: this.user.userId,
+        accountToDebit: "",
+        prnStatusCode: "",
+        taxpayername: "",
+        amount: "",
+        tin: "",
+        charges: "",
+        initiatedBy: "",
+        source: "",
+        terminalId: this.deviceId,
+        customerId: this.user.customerId,
+        productId: "4",
       };
+
+      console.log("QueryPrn Data: ", this.queryData)
 
       // Perform API call
       this.finance.PostData(this.queryData, "QueryURA").subscribe({
@@ -146,11 +184,10 @@ export class PayUraPage implements OnInit {
             }
 
             // Safely populate form controls
-            const details = data.details || {};
-
-            if (details.statusDesc !== "available") {
+            this.details = data.details || {};
+            if (this.details.statusDesc !== "available") {
               this.globalMethods.presentAlert(
-                "Error", details.statusDesc || "Invalid PRN"
+                "Error", this.details.statusDesc || "Invalid PRN"
               );
               return;
             }
@@ -158,11 +195,12 @@ export class PayUraPage implements OnInit {
             this.prnValidated = true;
 
             this.FormData.patchValue({
-              prnStatus: details.statusDesc || '',
-              payerName: details.taxpayername || '',
-              amount: details.amount || '',
-              tin: details.tin || '',
-              charges: details.charges || '0'
+              prnStatus: this.details.statusDesc || '',
+              payerName: this.details.taxpayername || '',
+              amount: this.details.amount || '',
+              tin: this.details.tin || '',
+              charges: this.details.charges || '0',
+              commission: this.details.commission || '0'
             });
           } catch (parseError) {
             this.globalMethods.presentAlert("Error", "Unable to process server response");
@@ -221,37 +259,61 @@ export class PayUraPage implements OnInit {
           return;
         }
 
+        console.log("PRn Details : ", this.details)
+
         this.transactionData = {
           accountToDebit: floatAccountNumber,
-          prn: this.FormData.controls['prn'].value,
+          prn: this.FormData.controls['prn'].value.toString(),
           prnStatusCode: this.FormData.controls['prnStatus'].value,
           taxPayerName: this.FormData.controls['payerName'].value,
           amount: this.FormData.controls['amount'].value,
           tin: this.FormData.controls['tin'].value,
           charges: this.FormData.controls['charges'].value,
-          initiatedBy: this.user.customerName,
-          source: this.FormData.controls['source'].value,
-          customerID: this.user.customerId,
+          initiatedBy: this.user.userId,
+          source: "APP",
+          customerId: this.user.customerId,
+          phone: this.FormData.controls['phone'].value,
+          terminalId: this.deviceId,
+          prnStatus: this.details.prnStatus,
+          statusDesc: this.details.statusDesc,
+          productId: '4',
         }
-        console.log("postura trandata : ", this.transactionData)
+
+        console.log("PostPrn Data : ", this.transactionData)
+
         this.finance.PostData(this.transactionData, "PostURA").subscribe(
           (data) => {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
-            if (resp.CODE == '200') {
+            if (resp.code == '200' && resp.status == "SUCCESS") {
               this.globalMethods.presentAlert('Success', 'Transaction completed')
+
+
+              //RECIEPT DATA
+              //This i generated on every payment to avoid cluttering the print logic
+              const receiptData = {
+                transactionID: resp.transactionId,
+                account: floatAccountNumber,
+                amount: this.FormData.controls['amount'].value,
+                product: 'URA Payment',
+                transactionReference: resp.transactionId || '0',
+                externalReference: null,
+                transferedBy: this.user.customerId,
+                transDate: this.globalMethods.getDate(),
+                customerName: this.user.names,
+                charges: this.details.charges,
+                commission: this.details.commission || '0',
+                contact: this.FormData.controls['phone'].value.toString()
+              }
+
               const navigationExtras: NavigationExtras = {
                 queryParams: {
-                  special: JSON.stringify(this.transactionData),
+                  transaction: JSON.stringify(receiptData),
                 },
               };
 
               this.navCtrl.navigateForward('print', navigationExtras);
-            }
-            //TODO Check session and logout
-            else if (resp.code === '1002') {
-
             }
             else {
               console.log("PostUraResp : ", resp)

@@ -31,6 +31,7 @@ export class TransactionsPage implements OnInit {
   public filteredTransactions: any[] = [];
   public categories: string[] = ['All', 'Credit', 'Debit'];
   public selectedCategory: string = 'All';
+  isLoading: boolean = true; // Loader state
 
   constructor(
     public globalMethods: GlobalMethodsService,
@@ -55,6 +56,7 @@ export class TransactionsPage implements OnInit {
     }
 
     const loading = await this.globalMethods.presentLoading(); // Show a loading spinner
+    this.isLoading = true
     try {
       // Fetch data from the backend
       this.finance.PostData(queryData, 'getfilteredtransactions').subscribe({
@@ -99,7 +101,8 @@ export class TransactionsPage implements OnInit {
         'An unexpected error occurred.'
       );
     } finally {
-      loading.dismiss(); // Dismiss the loading spinner in all cases
+      loading.dismiss();
+      this.isLoading = false
     }
   }
 

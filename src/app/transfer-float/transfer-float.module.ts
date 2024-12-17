@@ -14,7 +14,7 @@ import { TransferFloatPage } from './transfer-float.page';
     FormsModule,
     IonicModule,
     TransferFloatPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   declarations: [TransferFloatPage]
 })

@@ -84,6 +84,8 @@
     --color: var(--ion-color-primary-contrast);
     --background-hover: var(--ion-color-primary-shade);
     --background-activated: var(--ion-color-primary-tint);
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   ion-button[fill="outline"] {
@@ -91,6 +93,8 @@
     --border-color: var(--ion-color-primary);
     --color-hover: var(--ion-color-primary-tint);
     --border-color-hover: var(--ion-color-primary-tint);
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   /* Input fields */
@@ -209,7 +213,6 @@
   .service-item {
     border: 2px solid #1e88e5; /* Blue border */
     border-radius: 8px; /* Optional: Rounded corners */
-    padding: 12px; /* Space inside each item */
     margin: 8px 0; /* Space between items */
     background-color: #ffffff; /* Optional: White background for contrast */
     transition: transform 0.3s ease, box-shadow 0.3s ease;

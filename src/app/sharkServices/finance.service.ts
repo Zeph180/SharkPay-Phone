@@ -21,23 +21,6 @@ export class FinanceService {
     public router: Router
   ) { }
 
-  // PostData(formData: object, connectionString: string): Observable<any> {
-  //   this.accessToken = this.globalMethods.getUserData("accessToken") ?? ""
-  //   console.log("Token: ", this.accessToken)
-  //   const httpOptions = {
-  //     headers: new HttpHeaders({
-  //       Accept: 'application/json',
-  //       'Content-Type': 'application/json',
-  //       'Authorization': this.accessToken
-  //     }),
-  //   };
-
-  //   const res = this.httpClient
-  //     .post(this.apiUrl + connectionString, formData, httpOptions)
-  //     .pipe(map((result: any) => result));
-  //   return res;
-  // }
-
   PostData(formData: object, connectionString: string): Observable<any> {
     // Retrieve access token with null/empty checks
     this.accessToken = this.globalMethods.getUserData2("accessToken") || "";

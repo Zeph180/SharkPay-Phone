@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { GlobalMethodsService } from '../helpers/global-methods.service';
 import { Router } from '@angular/router';
 import { apiUrl } from './GlobalURl';
 import { map } from 'rxjs/operators';
@@ -10,9 +11,11 @@ import { map } from 'rxjs/operators';
 })
 export class AuthenticationService {
   private apiUrl = apiUrl + 'authentication/';
+  private accessToken: string = "";
 
   constructor(
     private httpClient: HttpClient,
+    public globalMethods: GlobalMethodsService,
     private router: Router) { }
 
   UserLogin(formData: any): Observable<any> {
@@ -88,12 +91,18 @@ export class AuthenticationService {
     this.router.navigate(['/login']);
   }
 
-  PostData(formData: FormData, connectionString: string, signature = ''): Observable<any> {
+  PostData(formData: any, connectionString: string): Observable<any> {
+    this.accessToken = this.globalMethods.getUserData2("accessToken") || "";
+
+    if (!this.accessToken) {
+      this.globalMethods.logout(this.router)
+    }
+
     const httpOptions = {
       headers: new HttpHeaders({
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Signature': signature,
+        'Authorization': `Bearer ${this.accessToken}`
       }),
     };
 

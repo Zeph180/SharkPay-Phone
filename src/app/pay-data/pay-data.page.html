@@ -3,12 +3,13 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Data</ion-title>
+    <ion-title>Buy Data</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <form [formGroup]="dataForm" (ngSubmit)="submit()">
+  <ion-text>COMING SOON</ion-text>
+  <form [formGroup]="dataForm" (ngSubmit)="submit()" *ngIf="false">
     <ion-list>
       <ion-item>
         <ion-input

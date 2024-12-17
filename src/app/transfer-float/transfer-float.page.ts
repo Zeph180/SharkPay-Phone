@@ -28,7 +28,9 @@ interface User {
 })
 export class TransferFloatPage implements OnInit {
   FormData!: FormGroup;
-  transactionData: object = {}
+  transactionData: object = {};
+  queryData: object = {};
+  deviceId: string = "";
 
   public accounts: {
     accountNumber: string,
@@ -36,7 +38,27 @@ export class TransferFloatPage implements OnInit {
     accountName: string,
     accountTypeId: string,
     accountType: string
-  }[] = []
+  }[] = [];
+
+  details: {
+    accountNumber: string;
+    balance: string;
+    accountName: string;
+    accountTypeId: string;
+    accountType: string;
+    status: string,
+    code: string;
+    message: string
+  } = {
+      "accountNumber": "",
+      "balance": "",
+      "accountName": "",
+      "accountTypeId": "",
+      "accountType": "",
+      "status": "",
+      "code": "",
+      "message": "",
+    }
 
   public user: User = {
     names: '',
@@ -90,9 +112,61 @@ export class TransferFloatPage implements OnInit {
       transactionLimit: '',
       ispasswordChangeRequired: ''
     };
+
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
   }
 
   ngOnInit() {
+  }
+
+  async validateAccount() {
+    const loading = await this.globalMethods.presentLoading();
+
+    try {
+      if (this.FormData.controls['acc2Credit'].invalid) {
+        this.globalMethods.presentAlert("Error", "Invalid float account number");
+        loading.dismiss();
+        return;
+      }
+
+      this.queryData = {
+        account: this.FormData.controls['acc2Credit'].value,
+        requestedBy: this.user.userId,
+        terminalId: this.deviceId,
+        customerId: this.user.customerId,
+        //TODO ADD PRODUCT ID
+        productId: ""
+      }
+
+      this.finance.PostData(this.queryData, "").subscribe({
+        next: (data) => {
+          try {
+            if (!data || data.status !== "SUCCESS" || data.code !== "200") {
+              this.globalMethods.presentAlert(
+                "Error",
+                data.message || "Invalid PRN response"
+              );
+              return;
+            }
+
+            this.details = data.accountDetails
+
+          } catch (parseError) {
+            this.globalMethods.presentAlert("Error", "Unable to process server response");
+          } finally {
+            loading.dismiss();
+          }
+        },
+        error: (error) => {
+
+        }
+      })
+
+    } catch (error) {
+      console.error("Exception in queryPRN:", error);
+      this.globalMethods.presentAlert("Exception", "Unexpected error occurred");
+      loading.dismiss();
+    }
   }
 
   async transferFloat() {
@@ -138,10 +212,11 @@ export class TransferFloatPage implements OnInit {
           accountToDebit: floatAccountNumber,
           accountToCredit: this.FormData.controls['acc2Credit'].value,
           amount: this.FormData.controls['amount'].value,
-          modeOfPayment: "Cash",
-          transactionType: "",
-          transferedBy: this.user.customerId,
+          modeOfPayment: "account-account",
+          transactionType: "transferFloat",
+          transferedBy: this.user.userId,
           remarks: this.FormData.controls['remarks'].value,
+          terminalId: this.deviceId,
         }
 
         console.log("Transferfloat Data:", this.transactionData)
@@ -181,7 +256,6 @@ export class TransferFloatPage implements OnInit {
             loading.dismiss();
           }
         })
-
     }
     catch {
       loading.dismiss()

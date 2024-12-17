@@ -8,12 +8,13 @@ import { Router } from '@angular/router';
 })
 export class PaymentsPage implements OnInit {
   paymentTypes = [
-    { title: 'Pay NWSC', icon: 'water', page: '/pay-nwsc' },
-    { title: 'Pay URA', icon: 'receipt', page: '/pay-ura' },
-    { title: 'Electricity', icon: 'flash', page: '/pay-umeme' },
-    { title: 'Airtime', icon: 'wifi', page: '/pay-airtime' },
+    { title: 'NWSC', icon: 'water', page: '/pay-nwsc' },
+    { title: 'URA', icon: 'receipt', page: '/pay-ura' },
     { title: 'Redeem Commission', icon: 'tv', page: '/redeem-float' },
     { title: 'Transfer Float', icon: 'school', page: '/transfer-float' },
+    { title: 'Electricity', icon: 'flash', page: '/pay-umeme' },
+    { title: 'Airtime', icon: 'wifi', page: '/pay-airtime' },
+    { title: 'Data', icon: 'wifi', page: '/pay-data' }
   ];
 
   constructor(private router: Router) { }

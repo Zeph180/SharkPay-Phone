@@ -15,13 +15,18 @@
         size-md="4"
         *ngFor="let payment of paymentTypes"
         (click)="navigateToPayment(payment.page)">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>{{ payment.title }}</ion-card-title>
-          </ion-card-header>
+        <ion-card class="ion-text-center service-item">
           <ion-card-content>
-            <ion-icon [name]="payment.icon" size="large"></ion-icon>
+            <ion-button
+            fill="clear"
+            class="service-btn"
+            style="margin: 0; padding: 0;"
+          >
+          <ion-icon [md]="payment.icon" size="large" style="color: white;"></ion-icon>
+          </ion-button>
+            <!-- <ion-icon [name]="payment.icon" size="large"  style="color: white;"></ion-icon> -->
           </ion-card-content>
+            <ion-text>{{ payment.title }}</ion-text>
         </ion-card>
       </ion-col>
     </ion-row>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
+import { Router } from '@angular/router';
 
 interface User {
   names: string;
@@ -55,7 +56,8 @@ export class MyAccountPage implements OnInit {
 
 
   constructor(
-    private globalMethods: GlobalMethodsService
+    private globalMethods: GlobalMethodsService,
+    private router: Router,
   ) {
     this.accounts = this.globalMethods.getUserData<{
       accountNumber: string;
@@ -88,7 +90,7 @@ export class MyAccountPage implements OnInit {
   }
 
   logout() {
+    this.globalMethods.logout(this.router)
     alert('Logged out successfully!');
-    // Add actual logout logic here
   }
 }

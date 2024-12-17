@@ -1,25 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { GlobalMethodsService } from './helpers/global-methods.service';
 
 register();
 
+interface User {
+  names: string;
+  email: string;
+  role: string;
+  roleId: string;
+  customerId: string;
+  customerName: string;
+  userType: string;
+  userTypeId: string;
+  username: string;
+  lastloginDate: string;
+  userId: string;
+  transactionLimit: string;
+  ispasswordChangeRequired: string;
+}
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public appPages = [
-    { title: 'Home', url: '/home', icon: 'mail' },
-    { title: 'Contact us', url: '/contact-us', icon: 'paper-plane' },
-    { title: 'Account', url: '/my-account', icon: 'heart' },
-    { title: 'Payments', url: '/payments', icon: 'archive' },
-    { title: 'Print', url: '/print', icon: 'warning' },
-    { title: 'Transactions', url: '/transactions', icon: 'trash' },
-    { title: 'App Updates', url: '/', icon: 'warning' },
-    { title: 'Logout', url: '/', icon: 'warning' },
+    { title: 'Home', url: '/home', icon: 'home' },
+    { title: 'Payments', url: '/payments', icon: 'shuffle' },
+    { title: 'Transactions', url: '/transactions', icon: 'list' },
+    { title: 'Account', url: '/my-account', icon: 'person' },
+    // { title: 'Print', url: '/print', icon: 'warning' },
+    { title: 'App Updates', url: '/', icon: 'appstore' },
+    { title: 'Contact us', url: '/contact-us', icon: 'call' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   showMenu = true;
@@ -32,6 +46,24 @@ export class AppComponent {
     accountType: string
   }[] = []
 
+  public user: User = {
+    names: '',
+    email: '',
+    role: '',
+    roleId: '',
+    customerId: '',
+    customerName: '',
+    userType: '',
+    userTypeId: '',
+    username: '',
+    lastloginDate: '',
+    userId: '',
+    transactionLimit: '',
+    ispasswordChangeRequired: ''
+  };
+
+  public floatAccountNumber: string = ""
+
   constructor(
     private router: Router,
     private globalMethods: GlobalMethodsService,
@@ -42,5 +74,35 @@ export class AppComponent {
       this.showMenu = !this.router.url.includes('/login');
       console.log(this.showMenu)
     });
+  }
+  ngOnInit() {
+    this.floatAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || '';
+  }
+
+  ionViewWillEnter() {
+    this.user = this.globalMethods.getUserData<User>('user') || {
+      names: '',
+      email: '',
+      role: '',
+      roleId: '',
+      customerId: '',
+      customerName: '',
+      userType: '',
+      userTypeId: '',
+      username: '',
+      lastloginDate: '',
+      userId: '',
+      transactionLimit: '',
+      ispasswordChangeRequired: ''
+    };
+  }
+
+  async logOut() {
+    try {
+      this.globalMethods.logout(this.router)
+    }
+    catch {
+      this.globalMethods.presentAlert("Error", "Error logging out. Please try again")
+    }
   }
 }

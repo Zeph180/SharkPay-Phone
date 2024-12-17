@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../sharkServices/authentication.service';
 import { Router } from '@angular/router';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
+import { Device } from '@capacitor/device';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,10 @@ export class LoginPage implements OnInit {
   loginForm: FormGroup;
   username: string = '';
   password: string = '';
+  deviceInfo: any;
+  deviceID: { identifier: string } = { identifier: '' };
+
+
   // Hardcoded credentials (for demo purposes)
   private correctUsername: string = 'testuser';
   private correctPassword: string = 'test123';
@@ -27,12 +32,13 @@ export class LoginPage implements OnInit {
     public loadingController: LoadingController,
   ) {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      username: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.getDeviceInfo();
   }
 
   onLogin() {
@@ -68,8 +74,9 @@ export class LoginPage implements OnInit {
         const postData = {
           username: this.loginForm.controls['username'].value,
           password: this.loginForm.controls['password'].value.toString(),
-          device: "device-identifier"
+          device: this.deviceID.identifier
         };
+        this.loginForm.reset();
 
         console.log("Logindata: ", postData)
         // Call the login method of AuthService
@@ -82,16 +89,18 @@ export class LoginPage implements OnInit {
             this.authService.storeUserData('user', JSON.stringify(response.user));
             this.authService.storeUserData('accounts', JSON.stringify(response.accounts));
 
-            this.router.navigate(['/home']);
+            //this.router.navigate(['/home']);
 
             //TODO CONDITIONALLY NAVIGATE
-            // if (response.user.ispasswordChangeRequired === 'True') {
-            //   this.router.navigate(['/reset-paassword']);
-            // }
-            // else {
-            //   // Navigate to home page on successful login
-            //   this.router.navigate(['/home']);
-            // }
+            console.log("USER: ", response.user)
+            if (response.user.ispasswordChangeRequired === 'True') {
+              console.log("IN PASSWORD RESET", response.user.ispasswordChangeRequired)
+              this.router.navigate(['/reset-paassword']);
+            }
+            else {
+              // Navigate to home page on successful login
+              this.router.navigate(['/home']);
+            }
 
           } else {
             console.log('Invalid credentials');
@@ -115,5 +124,14 @@ export class LoginPage implements OnInit {
     }
   }
 
-
+  async getDeviceInfo() {
+    try {
+      // Retrieve device information
+      this.deviceInfo = await Device.getInfo();
+      this.deviceID = await Device.getId();
+      this.authService.storeUserData('deviceID', this.deviceID.identifier.toString());
+    } catch (error) {
+      console.error('Error fetching device info:', error);
+    }
+  }
 }

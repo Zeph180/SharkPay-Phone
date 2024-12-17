@@ -1,0 +1,59 @@
+.payment-card {
+    text-align: center;
+    border-radius: 15px; /* Rounded corners */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--ion-color-light); /* Neutral light background */
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .card-primary {
+    background: linear-gradient(45deg, var(--ion-color-primary), #1a73e8); /* Primary blue gradient */
+    color: white;
+    border-radius: 15px;
+  }
+
+  .card-warning {
+    background: linear-gradient(45deg, var(--ion-color-warning), #e65100); /* Warning orange gradient */
+    color: white;
+    border-radius: 15px;
+  }
+
+  .card-header {
+    background: inherit; /* Match the card's gradient */
+    color: white;
+    padding: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .card-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .card-icon {
+    color: var(--ion-color-primary);
+    font-size: 2.5rem;
+  }
+
+  ion-col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  ion-grid {
+    padding: 15px;
+  }
+
+  ion-row {
+    justify-content: center;
+  }
