@@ -11,9 +11,7 @@ export class PayUMEMEPage implements OnInit {
 
   constructor(
     private fb: FormBuilder
-  ) { }
-
-  ngOnInit() {
+  ) {
     this.FormData = this.fb.group({
       tin: ['', [Validators.required, Validators.minLength(10)]],
       reference: ['', Validators.required],
@@ -21,6 +19,10 @@ export class PayUMEMEPage implements OnInit {
       payerName: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+  }
+
+  ngOnInit() {
+
   }
 
   submit() {

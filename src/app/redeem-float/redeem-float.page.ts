@@ -28,7 +28,8 @@ interface User {
 })
 export class RedeemFloatPage implements OnInit {
   FormData!: FormGroup;
-  transactionData: object = {}
+  transactionData: object = {};
+  deviceId: string;
 
   public accounts: {
     accountNumber: string,
@@ -88,6 +89,8 @@ export class RedeemFloatPage implements OnInit {
       transactionLimit: '',
       ispasswordChangeRequired: ''
     };
+
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || ''
   }
 
   ngOnInit() {
@@ -108,8 +111,13 @@ export class RedeemFloatPage implements OnInit {
           accountToDebit: commissionAccountNumber,
           accountToCredit: floatAccountNumber,
           amount: this.FormData.controls['amount'].value,
-          transferedBy: this.user.customerId,
+          transferedBy: this.user.names,
           remarks: this.FormData.controls['remarks'].value,
+          source: "App",
+          terminalId: this.deviceId.toString(),
+          customerId: this.user.customerId,
+          //TODO Add product id for redeem commission
+          productId: ""
         }
 
       this.finance.PostData(this.transactionData, "RedeemCommission").subscribe({
@@ -118,23 +126,37 @@ export class RedeemFloatPage implements OnInit {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
-            if (resp.CODE == '200') {
+            if (resp.code !== '200' || resp.status.toUpperCase() !== "SUCCESS") {
+              this.globalMethods.presentAlert(
+                "Error",
+                data.message || "Please try again"
+              );
+              return;
+            }
               this.globalMethods.presentAlert('Success', 'Transaction completed')
+
+            const receiptData = {
+              transactionID: resp.transactionId,
+              account: floatAccountNumber,
+              amount: this.FormData.controls['amount'].value,
+              product: 'Redeem Commission',
+              transactionReference: resp.transactionId || '0',
+              externalReference: null,
+              transferedBy: this.user.customerId,
+              transDate: this.globalMethods.getDate(),
+              customerName: this.user.names,
+              charges: '0',
+              commission: '0',
+              contact: ''
+            }
+
               const navigationExtras: NavigationExtras = {
                 queryParams: {
-                  special: JSON.stringify(this.transactionData),
+                  special: JSON.stringify(receiptData),
                 },
               };
 
-              this.navCtrl.navigateForward('print', navigationExtras);
-            }
-            //TODO Check session and logout
-            else if (resp.code === '1002') {
-
-            }
-            else {
-              this.globalMethods.presentAlert('Failed', 'Transaction failed')
-            }
+            this.navCtrl.navigateForward('print', navigationExtras);
           }
           catch (error) {
             console.error("Exception in queryPRN:", error);

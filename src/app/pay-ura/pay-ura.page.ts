@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FinanceService } from '../sharkServices/finance.service';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { GlobalMethodsService } from '../helpers/global-methods.service';
 
 
@@ -84,7 +83,6 @@ export class PayUraPage implements OnInit {
     private fb: FormBuilder,
     private finance: FinanceService,
     public loadingController: LoadingController,
-    private alertController: AlertController,
     public navCtrl: NavController,
     private globalMethods: GlobalMethodsService
   ) {
@@ -281,14 +279,12 @@ export class PayUraPage implements OnInit {
 
         console.log("PostPrn Data : ", this.transactionData)
 
-        this.finance.PostData(this.transactionData, "PostURA").subscribe(
-          (data) => {
+        this.finance.PostData(this.transactionData, "PostURA").subscribe({
+          next: (data) => {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
-            loading.dismiss();
             if (resp.code == '200' && resp.status == "SUCCESS") {
               this.globalMethods.presentAlert('Success', 'Transaction completed')
-
 
               //RECIEPT DATA
               //This i generated on every payment to avoid cluttering the print logic
@@ -319,13 +315,23 @@ export class PayUraPage implements OnInit {
               console.log("PostUraResp : ", resp)
               this.globalMethods.presentAlert('Failed', 'Transaction failed')
             }
+          },
+          error: (error) => {
+            console.error("Query PRN error:", error);
+            this.globalMethods.presentAlert(
+              "Error",
+              error.message || "Network request failed"
+            );
           }
+        }
+
         )
       }
     }
     catch {
-      loading.dismiss()
       this.globalMethods.presentAlert('Exception', 'An unknown error occured')
+    } finally {
+      loading.dismiss();
     }
   }
 }

@@ -31,6 +31,7 @@ export class TransferFloatPage implements OnInit {
   transactionData: object = {};
   queryData: object = {};
   deviceId: string = "";
+  accountValidated: boolean = false;
 
   public accounts: {
     accountNumber: string,
@@ -46,19 +47,35 @@ export class TransferFloatPage implements OnInit {
     accountName: string;
     accountTypeId: string;
     accountType: string;
-    status: string,
+    status: string;
     code: string;
-    message: string
+    message: string;
+    commission: string;
+    accountDetails: {
+      accountNumber: string;
+      balance: string;
+      accountName: string;
+      accountTypeId: string;
+      accountType: string;
+    };
   } = {
-      "accountNumber": "",
-      "balance": "",
-      "accountName": "",
-      "accountTypeId": "",
-      "accountType": "",
-      "status": "",
-      "code": "",
-      "message": "",
-    }
+      accountNumber: "",
+      balance: "",
+      accountName: "",
+      accountTypeId: "",
+      accountType: "",
+      status: "",
+      code: "",
+      message: "",
+      commission: "",
+      accountDetails: {
+        accountNumber: "",
+        balance: "",
+        accountName: "",
+        accountTypeId: "",
+        accountType: "",
+      }
+    };
 
   public user: User = {
     names: '',
@@ -87,6 +104,7 @@ export class TransferFloatPage implements OnInit {
       acc2Credit: ['', [Validators.required, Validators.minLength(10)]],
       amount: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       remarks: ['', Validators.required],
+      accName: ['', Validators.required],
     });
 
     this.accounts = this.globalMethods.getUserData<{
@@ -138,18 +156,31 @@ export class TransferFloatPage implements OnInit {
         productId: ""
       }
 
-      this.finance.PostData(this.queryData, "").subscribe({
+      this.finance.PostData(this.queryData, "validateAccount").subscribe({
         next: (data) => {
           try {
             if (!data || data.status !== "SUCCESS" || data.code !== "200") {
+              console.log("validate error: ", data)
               this.globalMethods.presentAlert(
                 "Error",
-                data.message || "Invalid PRN response"
+                data.message || "Invalid account response"
               );
               return;
             }
 
-            this.details = data.accountDetails
+            this.details = data || {};
+            if (this.details.message.toUpperCase() === 'SUCCESS' || this.details.accountDetails.accountName !== "float account") {
+              this.globalMethods.presentAlert(
+                "Error", this.details.message || "Invalid Account"
+              );
+              return;
+            }
+
+            this.accountValidated = true;
+
+            this.FormData.patchValue({
+              accName: this.details.accountDetails.accountName,
+            })
 
           } catch (parseError) {
             this.globalMethods.presentAlert("Error", "Unable to process server response");
@@ -158,13 +189,17 @@ export class TransferFloatPage implements OnInit {
           }
         },
         error: (error) => {
-
+          console.error("Query PRN error:", error);
+          this.globalMethods.presentAlert(
+            "Error",
+            error.message || "Network request failed"
+          );
         }
       })
-
     } catch (error) {
       console.error("Exception in queryPRN:", error);
       this.globalMethods.presentAlert("Exception", "Unexpected error occurred");
+    } finally {
       loading.dismiss();
     }
   }
@@ -173,9 +208,9 @@ export class TransferFloatPage implements OnInit {
     const loading = await this.globalMethods.presentLoading();
 
     try {
-
       if (this.FormData.invalid) {
-
+        this.globalMethods.presentAlert("Error", "Missing required values");
+        return;
       }
 
       const floatAccount = this.accounts.find(account =>
@@ -229,6 +264,22 @@ export class TransferFloatPage implements OnInit {
               loading.dismiss();
               if (resp.CODE == '200') {
                 this.globalMethods.presentAlert('Success', 'Transaction completed')
+
+                const receiptData = {
+                  transactionID: resp.transactionId || 'not received',
+                  account: floatAccountNumber,
+                  amount: this.FormData.controls['amount'].value,
+                  product: 'URA Payment',
+                  transactionReference: resp.transactionId || '0',
+                  externalReference: null,
+                  transferedBy: this.user.customerId,
+                  transDate: this.globalMethods.getDate(),
+                  customerName: this.user.names,
+                  charges: 0,
+                  commission: this.details.commission || '0',
+                  contact: this.FormData.controls['phone'].value.toString()
+                }
+
                 const navigationExtras: NavigationExtras = {
                   queryParams: {
                     special: JSON.stringify(this.transactionData),

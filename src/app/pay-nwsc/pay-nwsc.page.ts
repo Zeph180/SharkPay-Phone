@@ -31,6 +31,7 @@ export class PayNWSCPage implements OnInit {
   queryData: object = {}
   transactionData: object = {}
   meterValidated: boolean = false;
+  deviceId: string = "";
 
   areas: string[] = [];
 
@@ -107,6 +108,8 @@ export class PayNWSCPage implements OnInit {
       accountTypeId: string;
       accountType: string;
     }[]>('accounts') || [];
+
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
   }
 
   ngOnInit() {
@@ -146,7 +149,7 @@ export class PayNWSCPage implements OnInit {
           requestedBy: "18"
         }
 
-      this.finance.PostData(this.queryData, "/QueryNWSC").subscribe({
+      this.finance.PostData(this.queryData, "QueryNWSC").subscribe({
         next: (data) => {
           try {
             const s = JSON.stringify(data);
@@ -194,7 +197,11 @@ export class PayNWSCPage implements OnInit {
           registrationStatus: "",
           paymentMode: "",
           paymentIdentity: "",
-          phoneNumber: ""
+          phoneNumber: "",
+          source: "",
+          terminalId: this.deviceId.toString(),
+          customerId: "",
+          productId: "",
         }
 
         this.finance.PostData(this.queryData, "/QueryAreas").subscribe({
@@ -272,7 +279,7 @@ export class PayNWSCPage implements OnInit {
       }
 
         this.transactionData = {
-          accountToDebit: this.payNWSCForm.controls['account'].value,
+          accountToDebit: this.accounts.find(account => account.accountName === 'float account')?.accountNumber,
           customerReferenceNumber: this.payNWSCForm.controls['meterNumber'].value,
           area: this.payNWSCForm.controls['area'].value,
           amount: this.payNWSCForm.controls['amount'].value,
@@ -282,26 +289,51 @@ export class PayNWSCPage implements OnInit {
           initiatedBy: this.user.userId,
           source: "APP",
           customerID: this.payNWSCForm.controls['customerID'].value,
+          terminalId: this.deviceId.toString(),
+          //TODO Add pay nwsc productID
+          productId: ""
         }
 
-        this.finance.PostData(this.transactionData, "/PostNWSC").subscribe(
+      this.finance.PostData(this.transactionData, "PostNWSC").subscribe(
           (data) => {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
-            if (resp.CODE == '200') {
-              this.globalMethods.presentAlert('Success', 'Transaction completed')
+
+          if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
+            this.globalMethods.presentAlert(
+              "Error", resp.Message || "An error occured. Please try again"
+            );
+            return;
+          }
+
+          this.globalMethods.presentAlert('Success', 'Transaction completed')
+
+          const receiptData = {
+            transactionID: resp.transactionId,
+            account: this.accounts.find(account => account.accountName === 'float account')?.accountNumber,
+            amount: this.payNWSCForm.controls['amount'].value,
+            product: 'NWSC',
+            transactionReference: resp.transactionId || '0',
+            externalReference: null,
+            transferedBy: this.user.customerId,
+            transDate: this.globalMethods.getDate(),
+            customerName: this.user.names,
+
+            //TODO Add commission amount  and charges
+            charges: '0',
+            commission: '0',
+            contact: this.payNWSCForm.controls['phoneNumber'].value.toString()
+          }
+
               const navigationExtras: NavigationExtras = {
                 queryParams: {
-                  special: JSON.stringify(this.transactionData),
+                  special: JSON.stringify(receiptData),
                 },
               };
 
               this.navCtrl.navigateForward('print', navigationExtras);
-            }
-            else {
-              this.globalMethods.presentAlert('Failed', 'Transaction failed')
-            }
+
           }
         )
     }

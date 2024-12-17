@@ -19,9 +19,29 @@
         placeholder="Enter account to credit"
       ></ion-input>
     </ion-item>
+    <div *ngIf="FormData.get('acc2Credit')?.invalid && FormData.get('acc2Credit')?.touched" class="error">
+      <small *ngIf="FormData.get('acc2Credit')?.errors?.['required']">Account is required</small>
+      <small *ngIf="FormData.get('acc2Credit')?.errors?.['minlength']">Account must be at least 10 characters</small>
+    </div>
     <br />
+    <ion-button expand="block" (click)="validateAccount()" [disabled]="FormData.get('prn')?.invalid" *ngIf="!accountValidated">
+      Validate
+    </ion-button>
 
-    <div>
+    <div *ngIf="accountValidated">
+      <ion-item>
+        <ion-input
+          formControlName="accName"
+          label="Account Name"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          readonly="true"
+          placeholder="Account name"
+        ></ion-input>
+      </ion-item>
+      <br />
+
       <ion-item>
         <ion-input
           formControlName="amount"
