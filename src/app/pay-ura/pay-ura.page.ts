@@ -93,7 +93,7 @@ export class PayUraPage implements OnInit {
       charges: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       payerName: ['', Validators.required],
       prnStatus: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      // password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['', [Validators.minLength(10), Validators.maxLength(13)]],
       commission: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     });

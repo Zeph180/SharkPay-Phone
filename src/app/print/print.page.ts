@@ -105,13 +105,19 @@ export class PrintPage implements OnInit {
       });
 
       // Step 3: Prepare receipt content
-      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112       \n Terminal:         ${terminalId}         \n            Receipt         \n--------------------------------\n`;
-      const receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n SERVICE:     ${this.transaction.product}\n DATE:        ${this.transaction.transDate}\n ACCOUNT:     ${this.transaction.account}\n CONTACT:     ${this.transaction.contact}\n AMOUNT:      ${this.transaction.amount}\n CHARGES:     ${this.transaction.charges}\n COMMISSION:     ${this.transaction.commission}\n AMOUNT LOADED:     ${this.transaction.amount} \n--------------------------------\n`;
+      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin: 1027114639       \n Terminal:      ${terminalId}         \n            Receipt         \n--------------------------------\n`;
+      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Commission:     ${this.transaction.commission}\n Amount Loaded:     ${this.transaction.amount} \n--------------------------------\n`;
+      const uraAdditional = ` PRN:     ${this.transaction.charges}\n Payer:   ${this.transaction.commission}\n`;
       const receiptFooter = ` Thank you for paying with us!`;
+      var receipt = ``;
+
+      this.transaction.product == 'URA Payment' ?
+        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter :
+        receipt = receiptHeader + receiptDetails + receiptFooter;
 
       // Step 4: Print the receipt text
       await NexgoSDKNew['printText']({
-        text: receiptHeader + receiptDetails + receiptFooter,
+        text: receipt,
         fontSize: 24,
         alignment: 'LEFT',
         bold: true,
