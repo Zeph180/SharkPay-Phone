@@ -96,8 +96,6 @@ class="ion-text-center service-item"
 
           <p style="background-color: aliceblue; width: 70%; padding-inline: 10px; padding-top: 5%; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
             {{ transaction.transDate }}
-            <br />
-            {{transaction.product}}
           </p>
         </div>
       </ion-label>
@@ -108,8 +106,8 @@ class="ion-text-center service-item"
       style="flex: 0 0 30%; text-align: right; padding: 5px;"
       >
         <ion-text color="primary">{{ transaction.amount }}</ion-text>
-        <!-- <br />
-        <ion-text>{{ transaction.transactionID }} <br /> {{transaction.product}}</ion-text> -->
+        <br />
+        <ion-text>{{ transaction.transactionID }} <br/> {{transaction.product}}</ion-text>
       </ion-label>
     </ion-item>
   </ion-list>

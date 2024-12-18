@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Momo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="FormData" (ngSubmit)="topUpWithMomo()" style="margin-top: 20px;">
+    <ion-item>
+      <ion-input
+        formControlName="phone"
+        label="Phone"
+        type="tel"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter phone number"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('phone')?.invalid && FormData.get('phone')?.touched" class="error">
+      <small *ngIf="FormData.get('phone')?.errors?.['required']">Phone number is required</small>
+      <small *ngIf="FormData.get('phone')?.errors?.['minlength']">Phone must be at least 10 characters</small>
+    </div>
+    <br />
+
+    <ion-item>
+      <ion-input
+        formControlName="amount"
+        label="Amount"
+        type="number"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter amount"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('amount')?.invalid && FormData.get('amount')?.touched" class="error">
+      <small *ngIf="FormData.get('amount')?.errors?.['required']">Amount is required</small>
+      <!-- <small *ngIf="FormData.get('amount')?.errors?.['minlength']">Phone must be at least 10 characters</small> -->
+    </div>
+    <br />
+
+    <ion-item>
+      <ion-input
+        formControlName="remarks"
+        label="Remarks"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter remarks"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('remarks')?.invalid && FormData.get('remarks')?.touched" class="error">
+      <small *ngIf="FormData.get('remarks')?.errors?.['required']">Amount is required</small>
+    </div>
+          <!-- Submit Button -->
+          <!-- <ion-button type="button" expand="full" color="secondary" (click)="resetForm()">
+            Cancel Payment
+          </ion-button> -->
+
+          <ion-button expand="block" type="submit" [disabled]="FormData.invalid">
+            Submit Payment
+          </ion-button>
+          <br />
+  </form>
+</ion-content>

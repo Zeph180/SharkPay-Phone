@@ -110,7 +110,7 @@ export class RedeemFloatPage implements OnInit {
         this.transactionData = {
           accountToDebit: commissionAccountNumber,
           accountToCredit: floatAccountNumber,
-          amount: this.FormData.controls['amount'].value,
+          amount: this.FormData.controls['amount'].value.toString(),
           transferedBy: this.user.names,
           remarks: this.FormData.controls['remarks'].value,
           source: "App",
@@ -120,12 +120,14 @@ export class RedeemFloatPage implements OnInit {
           productId: ""
         }
 
+      console.log("Redeem commission data:", this.transactionData);
       this.finance.PostData(this.transactionData, "RedeemCommission").subscribe({
         next: (data) => {
           try {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
+            console.log("Redeem commission response:", resp);
             if (resp.code !== '200' || resp.status.toUpperCase() !== "SUCCESS") {
               this.globalMethods.presentAlert(
                 "Error",

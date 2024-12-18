@@ -96,7 +96,11 @@ const routes: Routes = [
     path: 'commission-transactions',
     loadChildren: () => import('./commission-transactions/commission-transactions.module').then( m => m.CommissionTransactionsPageModule)
     , canActivate: [AuthGuard]
+  },  {
+    path: 'momo',
+    loadChildren: () => import('./momo/momo.module').then( m => m.MomoPageModule)
   }
+
 ];
 
 @NgModule({

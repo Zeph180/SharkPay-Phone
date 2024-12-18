@@ -122,7 +122,8 @@ export class PayUraPage implements OnInit {
       accountType: string;
     }[]>('accounts') || [];
 
-    this.deviceId = this.globalMethods.getUserData2('deviceID') || ''
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
+    this.resetForm();
   }
 
   ngOnInit() {
@@ -259,14 +260,18 @@ export class PayUraPage implements OnInit {
 
         console.log("PRn Details : ", this.details)
 
+        const totalAmount = parseFloat(this.FormData.controls['amount'].value) + parseFloat(this.FormData.controls['charges'].value);
+
         this.transactionData = {
           accountToDebit: floatAccountNumber,
           prn: this.FormData.controls['prn'].value.toString(),
           prnStatusCode: this.FormData.controls['prnStatus'].value,
           taxPayerName: this.FormData.controls['payerName'].value,
-          amount: this.FormData.controls['amount'].value,
+          amount: this.FormData.controls['amount'].value.toString(),
           tin: this.FormData.controls['tin'].value,
-          charges: this.FormData.controls['charges'].value,
+          //TODO Update charges to be dynamic from server
+          //charges: this.FormData.controls['charges'].value,
+          charges: "2550",
           initiatedBy: this.user.userId,
           source: "APP",
           customerId: this.user.customerId,
@@ -274,7 +279,7 @@ export class PayUraPage implements OnInit {
           terminalId: this.deviceId,
           prnStatus: this.details.prnStatus,
           statusDesc: this.details.statusDesc,
-          productId: '4',
+          productId: this.details.productId
         }
 
         console.log("PostPrn Data : ", this.transactionData)
@@ -283,15 +288,20 @@ export class PayUraPage implements OnInit {
           next: (data) => {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
-            if (resp.code == '200' && resp.status == "SUCCESS") {
-              this.globalMethods.presentAlert('Success', 'Transaction completed')
 
-              //RECIEPT DATA
+            if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
+              this.globalMethods.presentAlert(
+                "Error", resp.message || "An error occured. Please try again"
+              );
+              return;
+            }
+
+            //RECIEPT DATA
               //This i generated on every payment to avoid cluttering the print logic
               const receiptData = {
                 transactionID: resp.transactionId,
                 account: floatAccountNumber,
-                amount: this.FormData.controls['amount'].value,
+                amount: totalAmount,
                 product: 'URA Payment',
                 transactionReference: resp.transactionId || '0',
                 externalReference: null,
@@ -300,21 +310,20 @@ export class PayUraPage implements OnInit {
                 customerName: this.user.names,
                 charges: this.details.charges,
                 commission: this.details.commission || '0',
-                contact: this.FormData.controls['phone'].value.toString()
+                contact: this.FormData.controls['phone'].value.toString() || '',
+                prn: this.FormData.controls['prn'].value.toString(),
+                payer: this.FormData.controls['payerName'].value,
+                userName: this.user.names
               }
 
+            this.globalMethods.presentAlert('Success', 'Transaction completed')
               const navigationExtras: NavigationExtras = {
                 queryParams: {
                   transaction: JSON.stringify(receiptData),
                 },
               };
 
-              this.navCtrl.navigateForward('print', navigationExtras);
-            }
-            else {
-              console.log("PostUraResp : ", resp)
-              this.globalMethods.presentAlert('Failed', 'Transaction failed')
-            }
+            this.navCtrl.navigateForward('print', navigationExtras);
           },
           error: (error) => {
             console.error("Query PRN error:", error);
@@ -333,5 +342,21 @@ export class PayUraPage implements OnInit {
     } finally {
       loading.dismiss();
     }
+  }
+
+  resetForm() {
+    this.FormData.reset(); // Reset form controls
+    this.details = {   // Reset variables to default
+      prn: '',
+      taxpayername: '',
+      amount: '0',
+      tin: '',
+      prnStatus: '',
+      statusDesc: '',
+      charges: '0',
+      commission: '',
+      productId: ''
+    };
+    this.prnValidated = false;
   }
 }

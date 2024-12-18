@@ -288,10 +288,10 @@ export class PayNWSCPage implements OnInit {
           charges: this.payNWSCForm.controls['charges'].value,
           initiatedBy: this.user.userId,
           source: "APP",
-          customerID: this.payNWSCForm.controls['customerID'].value,
+          customerId: this.payNWSCForm.controls['customerID'].value,
           terminalId: this.deviceId.toString(),
           //TODO Add pay nwsc productID
-          productId: ""
+          productId: "1"
         }
 
       this.finance.PostData(this.transactionData, "PostNWSC").subscribe(

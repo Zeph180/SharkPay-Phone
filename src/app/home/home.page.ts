@@ -73,6 +73,8 @@ export class HomePage implements OnInit {
       accountTypeId: string;
       accountType: string;
     }[]>('accounts') || [];
+
+    this.queryTransactions();
   }
 
   ngOnInit() {
@@ -82,7 +84,7 @@ export class HomePage implements OnInit {
   async ionViewWillEnter() {
     // Show the loader while loading transactions
     this.isLoading = true;
-    this.queryTransactions();
+    //this.queryTransactions();
     this.isLoading = false;
   }
 

@@ -1,6 +1,6 @@
 import { GlobalMethodsService } from './../helpers/global-methods.service';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NexgoSDKNew } from 'nexgsdknew';
 
 
@@ -31,6 +31,9 @@ export class PrintPage implements OnInit {
     charges: string;
     commission: string;
     contact: string;
+    prn: string;
+    payer: string;
+    userName: string;
   } = {
       transactionID: '',
       account: '',
@@ -51,12 +54,16 @@ export class PrintPage implements OnInit {
       transferedByName: '',
       charges: '',
       commission: '',
-      contact: ''
+      contact: '',
+      prn: '',
+      payer: '',
+      userName: ''
     }
 
   constructor(
     private route: ActivatedRoute,
-    private globalMethodsService: GlobalMethodsService
+    private globalMethodsService: GlobalMethodsService,
+    private router: Router
   ) {
 
   }
@@ -105,9 +112,9 @@ export class PrintPage implements OnInit {
       });
 
       // Step 3: Prepare receipt content
-      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin: 1027114639       \n Terminal:      ${terminalId}         \n            Receipt         \n--------------------------------\n`;
-      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Commission:     ${this.transaction.commission}\n Amount Loaded:     ${this.transaction.amount} \n--------------------------------\n`;
-      const uraAdditional = ` PRN:     ${this.transaction.charges}\n Payer:   ${this.transaction.commission}\n`;
+      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n            Receipt         \n--------------------------------\n`;
+      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} \n--------------------------------\n`;
+      const uraAdditional = ` PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer}\n\n`;
       const receiptFooter = ` Thank you for paying with us!`;
       var receipt = ``;
 
@@ -130,4 +137,7 @@ export class PrintPage implements OnInit {
     }
   }
 
+  navigateToHome() {
+    this.router.navigate(['/home']);
+  }
 }
