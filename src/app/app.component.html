@@ -5,7 +5,10 @@
         <ion-toolbar color="primary" style="padding: 15px; height: 100%;">
           <ion-text class="center-text">
             <ion-title>{{ user.names }}</ion-title>
-            <p>{{floatAccountNumber}}</p>
+            <ion-text>
+              <small>{{ user.email }}</small> <br />
+              <small>{{ floatAccountNumber}}</small>
+            </ion-text>
           </ion-text>
         </ion-toolbar>
       </div>

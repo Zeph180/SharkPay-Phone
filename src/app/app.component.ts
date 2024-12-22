@@ -76,11 +76,23 @@ export class AppComponent implements OnInit {
     });
   }
   ngOnInit() {
-    this.floatAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || '';
-  }
+    // this.globalMethods.getAccountsObservable().subscribe((accounts) => {
+    //   if (accounts) {
+    //     this.accounts = accounts;
+    //     console.log('Accounts updated:', this.accounts);
+    //     this.floatAccountNumber = this.accounts.find(account => account.accountName === 'float account')?.accountNumber || '';
+    //   }
+    // });
 
-  ionViewWillEnter() {
-    this.user = this.globalMethods.getUserData<User>('user') || {
+    this.globalMethods.getUserObservable().subscribe((user) => {
+      if (user) {
+        this.user = user;
+        console.log('User information updated:', this.user);
+      }
+    });
+
+    // Initialize user on app load
+    const storedUser = this.globalMethods.getUserData<User>('user') || {
       names: '',
       email: '',
       role: '',
@@ -95,6 +107,9 @@ export class AppComponent implements OnInit {
       transactionLimit: '',
       ispasswordChangeRequired: ''
     };
+    if (storedUser) {
+      this.user = storedUser;
+    }
   }
 
   async logOut() {

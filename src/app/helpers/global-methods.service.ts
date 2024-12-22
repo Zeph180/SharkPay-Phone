@@ -1,16 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalMethodsService {
+  private userSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private accountsSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
   ) { }
+
+  // Set user data
+  setUserData(user: any) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.userSubject.next(user);
+  }
+
+  // setAccountsData(accounts: any) {
+  //   localStorage.setItem('accounts', JSON.stringify(accounts));
+  //   this.accountsSubject.next(accounts);
+  // }
+
+  // Observe user data
+  getUserObservable() {
+    return this.userSubject.asObservable();
+  }
+
+  getAccountsObservable() {
+    return this.accountsSubject.asObservable();
+  }
 
   async presentAlert(headerText: string, message: string) {
     const alert = await this.alertController.create({
