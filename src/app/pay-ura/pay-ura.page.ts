@@ -144,7 +144,7 @@ export class PayUraPage implements OnInit {
     const loading = await this.globalMethods.presentLoading();
 
     try {
-      if (!this.FormData.controls['prn'].valid) {
+      if (this.FormData.controls['prn'].invalid) {
         this.globalMethods.presentAlert("Error", "Invalid PRN number");
         loading.dismiss();
         return;

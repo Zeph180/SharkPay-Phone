@@ -94,7 +94,7 @@ export class PayUMEMEPage implements OnInit {
       balance: [''],
       charges: [''],
       commission: ['', Validators.required],
-      phone: ['', [Validators.minLength(10), Validators.minLength(10), Validators.maxLength(13)]],
+      phone: ['', [Validators.minLength(10), Validators.minLength(10), Validators.maxLength(13), Validators.required]],
     });
 
     this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
@@ -248,16 +248,15 @@ export class PayUMEMEPage implements OnInit {
           accountToDebit: floatAccountNumber,
           customerMeterNumber: this.FormData.controls['meterNumber'].value.toString(),
           customerName: this.details.customerName,
-          telephone: this.FormData.controls['phone'].value || '',
+          meterType: this.details.type,
           amount: this.FormData.controls['amount'].value.toString(),
+          telephone: this.FormData.controls['phone'].value || '',
           charges: this.details.charges,
           initiatedBy: this.user.userId,
           source: "APP",
-          customerId: this.user.customerId,
+          customerID: this.user.customerId,
           terminalId: this.deviceId,
-          productId: this.details.productId,
-          meterType: this.details.type,
-          transactionType: "UMEME_POSTPAID"
+          productId: this.details.productId
         }
 
         console.log("PostUmeme Data : ", this.transactionData)
@@ -289,8 +288,8 @@ export class PayUMEMEPage implements OnInit {
               customerName: this.user.names,
               charges: this.details.charges,
               commission: this.details.commission || '0',
-              contact: this.FormData.controls['phone'].value.toString() || '',
-              prn: this.FormData.controls['prn'].value.toString(),
+              contact: this.FormData.controls['phone'].value.toString(),
+              // prn: this.FormData.controls['prn'].value.toString(),
               payer: this.FormData.controls['payerName'].value,
               userName: this.user.names
             }
@@ -314,6 +313,9 @@ export class PayUMEMEPage implements OnInit {
         }
 
         )
+      }
+      else {
+        this.globalMethods.presentAlert("Error", "Missing required values");
       }
     }
     catch (error) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FinanceService } from '../sharkServices/finance.service';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
@@ -32,6 +32,7 @@ export class TransferFloatPage implements OnInit {
   queryData: object = {};
   deviceId: string = "";
   accountValidated: boolean = false;
+  productID: string = "";
 
   public accounts: {
     accountNumber: string,
@@ -42,38 +43,26 @@ export class TransferFloatPage implements OnInit {
   }[] = [];
 
   details: {
-    accountNumber: string;
-    balance: string;
-    accountName: string;
-    accountTypeId: string;
-    accountType: string;
-    status: string;
+    accountDetails: {
+      customerID: string;
+      customerName: string;
+      accountNumber: string;
+      accountType: string;
+      status: string;
+      productId: string
+    };
     code: string;
     message: string;
-    commission: string;
-    accountDetails: {
-      accountNumber: string;
-      balance: string;
-      accountName: string;
-      accountTypeId: string;
-      accountType: string;
-    };
   } = {
-      accountNumber: "",
-      balance: "",
-      accountName: "",
-      accountTypeId: "",
-      accountType: "",
-      status: "",
       code: "",
       message: "",
-      commission: "",
       accountDetails: {
         accountNumber: "",
-        balance: "",
-        accountName: "",
-        accountTypeId: "",
         accountType: "",
+        customerID: "",
+        customerName: "",
+        status: "",
+        productId: ""
       }
     };
 
@@ -156,33 +145,39 @@ export class TransferFloatPage implements OnInit {
         productId: ""
       }
 
+      console.log("Query Data:", this.queryData)
+
       this.finance.PostData(this.queryData, "validateAccount").subscribe({
         next: (data) => {
           try {
+
             if (!data || data.status !== "SUCCESS" || data.code !== "200") {
               console.log("validate error: ", data)
               this.globalMethods.presentAlert(
                 "Error",
-                data.message || "Invalid account response"
+                data.message || "Invalid account"
               );
               return;
             }
+
+            console.log("Data: ", data)
 
             this.details = data || {};
-            if (this.details.message.toUpperCase() === 'SUCCESS' || this.details.accountDetails.accountName !== "float account") {
-              this.globalMethods.presentAlert(
-                "Error", this.details.message || "Invalid Account"
-              );
-              return;
-            }
+            // if (this.details.message.toUpperCase() === 'SUCCESS' || this.details.accountDetails.accountName !== "float account") {
+            //   this.globalMethods.presentAlert(
+            //     "Error", this.details.message || "Invalid Account"
+            //   );
+            //   return;
+            // }
 
             this.accountValidated = true;
+            this.productID = data.accountDetails.productId
 
             this.FormData.patchValue({
-              accName: this.details.accountDetails.accountName,
+              accName: this.details.accountDetails.customerName
             })
-
-          } catch (parseError) {
+          } catch (error) {
+            console.log("Error: ", error)
             this.globalMethods.presentAlert("Error", "Unable to process server response");
           } finally {
             loading.dismiss();
@@ -246,12 +241,15 @@ export class TransferFloatPage implements OnInit {
         this.transactionData = {
           accountToDebit: floatAccountNumber,
           accountToCredit: this.FormData.controls['acc2Credit'].value,
-          amount: this.FormData.controls['amount'].value,
-          modeOfPayment: "account-account",
-          transactionType: "transferFloat",
+          amount: this.FormData.controls['amount'].value.toString(),
+          modeOfPayment: "12",
+          transactionType: "11",
           transferedBy: this.user.userId,
           remarks: this.FormData.controls['remarks'].value,
-          terminalId: this.deviceId,
+          source: "APP",
+          terminalId: this.deviceId.toString(),
+          customerId: this.user.customerId,
+          productId: this.details.accountDetails.productId
         }
 
         console.log("Transferfloat Data:", this.transactionData)
@@ -262,35 +260,37 @@ export class TransferFloatPage implements OnInit {
               const s = JSON.stringify(data);
               const resp = JSON.parse(s);
               loading.dismiss();
-              if (resp.CODE == '200') {
+              if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
+                this.globalMethods.presentAlert(
+                  'Failed', resp.message || 'Transaction failed'
+                );
+                return;
+              }
+
                 this.globalMethods.presentAlert('Success', 'Transaction completed')
 
                 const receiptData = {
-                  transactionID: resp.transactionId || 'not received',
+                  transactionID: resp.transactionId || '0',
                   account: floatAccountNumber,
-                  amount: this.FormData.controls['amount'].value,
-                  product: 'URA Payment',
+                  amount: this.FormData.controls['amount'].value.toString(),
+                  product: 'Transfer Float',
                   transactionReference: resp.transactionId || '0',
                   externalReference: null,
                   transferedBy: this.user.customerId,
                   transDate: this.globalMethods.getDate(),
                   customerName: this.user.names,
                   charges: 0,
-                  commission: this.details.commission || '0',
-                  contact: this.FormData.controls['phone'].value.toString()
+                  contact: "N/A",
                 }
 
                 const navigationExtras: NavigationExtras = {
                   queryParams: {
-                    special: JSON.stringify(this.transactionData),
+                    transaction: JSON.stringify(receiptData),
                   },
                 };
 
                 this.navCtrl.navigateForward('print', navigationExtras);
-              }
-              else {
-                this.globalMethods.presentAlert('Failed', 'Transaction failed')
-              }
+
             } catch (parseError) {
               console.log("Transfer float error:", parseError)
               this.globalMethods.presentAlert("Error", "Unable to process server response");

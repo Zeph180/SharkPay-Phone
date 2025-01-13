@@ -21,6 +21,10 @@ interface User {
   ispasswordChangeRequired: string;
 }
 
+interface Area {
+  area: string;
+}
+
 @Component({
   selector: 'app-pay-nwsc',
   templateUrl: './pay-nwsc.page.html',
@@ -32,8 +36,10 @@ export class PayNWSCPage implements OnInit {
   transactionData: object = {}
   meterValidated: boolean = false;
   deviceId: string = "";
+  productID: string = "";
+  nwscCommission: string = "";
 
-  areas: string[] = [];
+  areas: Area[] = [];
 
   public accounts: {
     accountNumber: string,
@@ -68,21 +74,22 @@ export class PayNWSCPage implements OnInit {
     public globalMethods: GlobalMethodsService
   ) {
     this.payNWSCForm = this.formBuilder.group({
-      meterNumber: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+      meterNumber: ['', [Validators.required]],
       area: ['', Validators.required],
-      amount: ['', [Validators.required, Validators.min(1)]],
-      charges: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      amount: ['', [Validators.required, Validators.min(3)]],
+      charges: ['', [Validators.required]],
+      commission: ['', [Validators.required]],
+      outstandingBalance: ['', [Validators.required]],
       phoneNumber: [
         '',
         [Validators.required, Validators.pattern(/^(\+256|0)[7-9]\d{8}$/)],
       ],
-      password: ['', [Validators.required, Validators.minLength(6)]],
       name: ['', Validators.required],
-      source: ['', Validators.required],
-      prnStatus: ['', Validators.required],
-      customerID: ['', Validators.required],
-      account: ['', [Validators.required]],
-      initiator: ['', Validators.required],
+      // source: ['', Validators.required],
+      registrationStatus: [''],
+      // customerID: ['', Validators.required],
+      // account: ['', [Validators.required]],
+      // initiator: ['', Validators.required],
     });
 
     this.user = this.globalMethods.getUserData<User>('user') || {
@@ -113,24 +120,10 @@ export class PayNWSCPage implements OnInit {
   }
 
   ngOnInit() {
-
-  }
-
-  ionViewWillEnter() {
     this.queryNWSCAreas();
   }
 
-  async presentLoading(message: string = 'Please wait...') {
-    const loading = await this.loadingController.create({
-      message,
-      translucent: true,
-      cssClass: 'my-custom-loader',
-      backdropDismiss: true,
-      spinner: 'lines-sharp',
-      animated: true,
-    });
-    await loading.present();
-    return loading;
+  ionViewWillEnter() {
   }
 
   async queryNWSC(meterNO: string) {
@@ -146,8 +139,14 @@ export class PayNWSCPage implements OnInit {
         this.queryData = {
           customerReferenceNumber: this.payNWSCForm.controls['meterNumber'].value,
           area: this.payNWSCForm.controls['area'].value,
-          requestedBy: "18"
+          requestedBy: this.user.userId,
+          source: "APP",
+          customerId: this.user.customerId,
+          terminalId: this.deviceId.toString(),
+          amount: this.payNWSCForm.controls['amount'].value.toString(),
         }
+
+      console.log('Querying NWSC:', this.queryData);
 
       this.finance.PostData(this.queryData, "QueryNWSC").subscribe({
         next: (data) => {
@@ -155,14 +154,27 @@ export class PayNWSCPage implements OnInit {
             const s = JSON.stringify(data);
             const resp = JSON.parse(s);
             loading.dismiss();
-            if (resp.CODE == '200' && resp.details) {
+            // Validate response
+            if (!data || data.status !== "SUCCESS" || data.code !== "200") {
+              this.globalMethods.presentAlert(
+                "Error",
+                data.message || "Invalid Meter response"
+              );
+              return;
+            }
 
               this.meterValidated = true;
-              //TODO Populate non editable values got from api
-            }
-            else {
-              this.globalMethods.presentAlert("Error", resp.message)
-            }
+            this.productID = resp.details.productId;
+            this.nwscCommission = resp.details.commission;
+            this.payNWSCForm.patchValue({
+              name: resp.details.name,
+              outstandingBalance: resp.details.outstandingBalance,
+              charges: resp.details.charges,
+              commission: resp.details.commission,
+              customerID: resp.details.customerReferenceNumber,
+              registrationStatus: resp.details.registrationStatus || 'Not Registered',
+            })
+
           } catch {
 
             }
@@ -186,30 +198,29 @@ export class PayNWSCPage implements OnInit {
 
   async queryNWSCAreas() {
     const loading = await this.globalMethods.presentLoading();
+
     try {
-      if (this.payNWSCForm.controls['meterNumber'].valid) {
+      // if (this.payNWSCForm.controls['meterNumber'].invalid || this.payNWSCForm.controls['amount'].invalid) {
+      //   this.globalMethods.presentAlert("Error", 'Invalid meter number or amount')
+      //   loading.dismiss();
+      //   return
+      // }
+
+      console.log('Querying areas');
         this.queryData = {
-          customerReferenceNumber: "",
-          area: "",
-          amount: "",
-          name: "",
-          outstandingBalance: "",
-          registrationStatus: "",
-          paymentMode: "",
-          paymentIdentity: "",
-          phoneNumber: "",
-          source: "",
+          source: "APP",
           terminalId: this.deviceId.toString(),
-          customerId: "",
-          productId: "",
+          customerId: this.user.customerId,
+          initiatedBy: this.user.userId,
         }
 
-        this.finance.PostData(this.queryData, "/QueryAreas").subscribe({
+      this.finance.PostData(this.queryData, "QueryAreas").subscribe({
           next: (data) => {
             try {
               const s = JSON.stringify(data);
               const resp = JSON.parse(s);
               loading.dismiss();
+              console.log('Query areas response:', resp);
 
               if (!resp.areas) {
                 this.globalMethods.presentAlert(
@@ -219,8 +230,10 @@ export class PayNWSCPage implements OnInit {
               }
 
               this.areas = resp.areas;
-            } catch {
-
+              console.log('Areas:', this.areas);
+            } catch (error) {
+              console.error("Query areas error:", error);
+              loading.dismiss();
             }
           },
           error: (error) => {
@@ -232,7 +245,7 @@ export class PayNWSCPage implements OnInit {
             loading.dismiss();
           }
         })
-      }
+
     } catch (error) {
       console.error("Exception in queryPRN:", error);
       this.globalMethods.presentAlert("Exception", "Unexpected error occurred");
@@ -250,55 +263,59 @@ export class PayNWSCPage implements OnInit {
         return
       }
 
-      const floatAccount = this.accounts.find(account =>
-        account.accountName.toLowerCase() === "float account"
-      );
+      // const floatAccount = this.accounts.find(account =>
+      //   account.accountName.toLowerCase() === "float account"
+      // );
 
-      const floatAccountBalance = floatAccount ? floatAccount.balance : null;
+      // const floatAccountBalance = floatAccount ? floatAccount.balance : null;
 
-      // Validate transaction amount
-      const transactionAmount = this.payNWSCForm.controls['amount'].value;
+      // // Validate transaction amount
+      // const transactionAmount = this.payNWSCForm.controls['amount'].value;
 
-      // Check for insufficient funds
-      if (floatAccountBalance === null) {
-        loading.dismiss();
-        this.globalMethods.presentAlert("Error", "Float account not found");
-        return;
-      }
+      // // Check for insufficient funds
+      // if (floatAccountBalance === null) {
+      //   loading.dismiss();
+      //   this.globalMethods.presentAlert("Error", "Float account not found");
+      //   return;
+      // }
 
-      if (transactionAmount > floatAccountBalance) {
-        loading.dismiss();
-        this.globalMethods.presentAlert("Error", "Insufficient funds");
-        return;
-      }
-      // Check transaction limit
-      if (transactionAmount > this.user.transactionLimit) {
-        loading.dismiss();
-        this.globalMethods.presentAlert("Error", "Amount exceeds your transaction limit");
-        return;
-      }
+      // if (transactionAmount > floatAccountBalance) {
+      //   loading.dismiss();
+      //   this.globalMethods.presentAlert("Error", "Insufficient funds");
+      //   return;
+      // }
+      // // Check transaction limit
+      // if (transactionAmount > this.user.transactionLimit) {
+      //   loading.dismiss();
+      //   this.globalMethods.presentAlert("Error", "Amount exceeds your transaction limit");
+      //   return;
+      // }
 
         this.transactionData = {
-          accountToDebit: this.accounts.find(account => account.accountName === 'float account')?.accountNumber,
           customerReferenceNumber: this.payNWSCForm.controls['meterNumber'].value,
+          accountToDebit: this.accounts.find(account => account.accountName === 'float account')?.accountNumber,
           area: this.payNWSCForm.controls['area'].value,
-          amount: this.payNWSCForm.controls['amount'].value,
+          amount: this.payNWSCForm.controls['amount'].value.toString(),
           name: this.payNWSCForm.controls['name'].value,
+          outstandingBalance: this.payNWSCForm.controls['outstandingBalance'].value,
+          registrationStatus: this.payNWSCForm.controls['registrationStatus'].value,
+          paymentMode: "CASH",
+          paymentIdentity: "11",
           phonenumber: this.payNWSCForm.controls['phoneNumber'].value,
+          source: "APP",
+          terminalId: this.deviceId.toString(),
+          customerId: this.user.customerId,
+          productId: this.productID,
           charges: this.payNWSCForm.controls['charges'].value,
           initiatedBy: this.user.userId,
-          source: "APP",
-          customerId: this.payNWSCForm.controls['customerID'].value,
-          terminalId: this.deviceId.toString(),
-          //TODO Add pay nwsc productID
-          productId: "1"
+          commission: this.nwscCommission
         }
 
-      this.finance.PostData(this.transactionData, "PostNWSC").subscribe(
-          (data) => {
-            const s = JSON.stringify(data);
-            const resp = JSON.parse(s);
-            loading.dismiss();
+      console.log('Transaction data:', this.transactionData);
+      this.finance.PostData(this.transactionData, "PostNWSC").subscribe({
+        next: (data) => {
+          const s = JSON.stringify(data);
+          const resp = JSON.parse(s);
 
           if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
             this.globalMethods.presentAlert(
@@ -307,6 +324,7 @@ export class PayNWSCPage implements OnInit {
             return;
           }
 
+          console.log('Post NWSC response:', resp);
           this.globalMethods.presentAlert('Success', 'Transaction completed')
 
           const receiptData = {
@@ -319,27 +337,37 @@ export class PayNWSCPage implements OnInit {
             transferedBy: this.user.customerId,
             transDate: this.globalMethods.getDate(),
             customerName: this.user.names,
-
-            //TODO Add commission amount  and charges
-            charges: '0',
-            commission: '0',
+            charges: this.payNWSCForm.controls['charges'].value.toString(),
+            commission: this.nwscCommission,
             contact: this.payNWSCForm.controls['phoneNumber'].value.toString()
           }
 
-              const navigationExtras: NavigationExtras = {
-                queryParams: {
-                  special: JSON.stringify(receiptData),
-                },
-              };
+          const navigationExtras: NavigationExtras = {
+            queryParams: {
+              transaction: JSON.stringify(receiptData),
+            },
+          };
 
-              this.navCtrl.navigateForward('print', navigationExtras);
+          this.navCtrl.navigateForward('print', navigationExtras);
 
-          }
-        )
+        },
+        error: (error) => {
+          console.error("Post NWSC error:", error);
+          this.globalMethods.presentAlert(
+            "Error",
+            error.message || "Network request failed"
+          );
+          loading.dismiss();
+        }
+      })
     }
-    catch {
+    catch (error) {
       loading.dismiss()
+      console.log('Exception in payNWSC', error)
       this.globalMethods.presentAlert('Exception', 'An unknown error occured')
+    }
+    finally {
+      loading.dismiss()
     }
   }
 
