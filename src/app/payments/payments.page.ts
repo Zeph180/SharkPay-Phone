@@ -14,12 +14,15 @@ export class PaymentsPage implements OnInit {
     { title: 'Transfer Float', icon: 'school', page: '/transfer-float' },
     { title: 'Electricity', icon: 'flash', page: '/pay-umeme' },
     { title: 'Airtime', icon: 'wifi', page: '/pay-airtime' },
-    { title: 'Data', icon: 'wifi', page: '/pay-data' }
+    { title: 'Data', icon: 'wifi', page: '/pay-data' },
+    { title: 'Momo Topup', icon: 'wifi', page: '/momo' }
+
   ];
 
   constructor(private router: Router) { }
 
   ngOnInit() {
+    console.log("ddd")
   }
 
   navigateToPayment(page: string) {
