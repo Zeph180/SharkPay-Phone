@@ -28,6 +28,7 @@ interface User {
 })
 export class ResetPaasswordPage implements OnInit {
   resetPasswordForm: FormGroup;
+  deviceId: string = "";
 
   public user: User = {
     names: '',
@@ -73,6 +74,9 @@ export class ResetPaasswordPage implements OnInit {
       transactionLimit: '',
       ispasswordChangeRequired: ''
     };
+
+    this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
+
   }
 
   ngOnInit() {
@@ -81,15 +85,17 @@ export class ResetPaasswordPage implements OnInit {
   async resetPassword() {
     const loading = await this.globalMethods.presentLoading();
     try {
+      console.log('Device', this.deviceId)
       const postData = {
         username: this.user.username,
         oldPassword: this.resetPasswordForm.controls['oldPassword'].value.toString(),
         newPassword: this.resetPasswordForm.controls['newPassword'].value.toString(),
         customerId: this.user.userId,
         updatedBy: this.user.customerId,
-        device: this.globalMethods.getUserData('deviceID'),
+        device: this.deviceId,
       }
 
+      console.log('Reset PWD Data', postData)
       this.authService.PostData(postData, 'ResetPassword').subscribe({
         next: (data) => {
           try {
@@ -105,6 +111,7 @@ export class ResetPaasswordPage implements OnInit {
               "Success",
               data.message
             )
+
             this.router.navigate(['/login']);
 
           } catch (parseError) {
@@ -121,8 +128,8 @@ export class ResetPaasswordPage implements OnInit {
           loading.dismiss();
         }
       })
-    } catch (error) {
-      this.globalMethods.presentAlert("Exception", "Unexpected error occurred");
+    } catch (error: any) {
+      this.globalMethods.presentAlert("Exception", error.message);
       loading.dismiss();
     }
   }

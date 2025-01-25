@@ -32,7 +32,7 @@ export class LoginPage implements OnInit {
     public loadingController: LoadingController,
   ) {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(6)]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -95,7 +95,8 @@ export class LoginPage implements OnInit {
             console.log("USER: ", response.user)
             if (response.user.ispasswordChangeRequired === 'True') {
               console.log("IN PASSWORD RESET", response.user.ispasswordChangeRequired)
-              this.router.navigate(['/reset-paassword']);
+              // this.router.navigate(['/reset-paassword']);
+              this.router.navigate(['/home']);
             }
             else {
               // Navigate to home page on successful login
@@ -129,6 +130,7 @@ export class LoginPage implements OnInit {
       // Retrieve device information
       this.deviceInfo = await Device.getInfo();
       this.deviceID = await Device.getId();
+      console.log("Device at login:", this.deviceID)
       this.authService.storeUserData('deviceID', this.deviceID.identifier.toString());
     } catch (error) {
       console.error('Error fetching device info:', error);
