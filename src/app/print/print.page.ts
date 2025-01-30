@@ -132,6 +132,7 @@ export class PrintPage implements OnInit {
 
       // Step 5: Start the print process
       await NexgoSDKNew['startPrint']();
+      this.router.navigate(['/home']);
     } catch (error) {
       console.error('Printing failed:', error);
     }

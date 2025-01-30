@@ -94,7 +94,7 @@ export class PayUraPage implements OnInit {
       payerName: ['', Validators.required],
       prnStatus: ['', Validators.required],
       // password: ['', [Validators.required, Validators.minLength(6)]],
-      phone: ['', [Validators.minLength(10), Validators.maxLength(13)]],
+      phone: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(13)]],
       commission: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     });
 
@@ -173,8 +173,9 @@ export class PayUraPage implements OnInit {
       this.finance.PostData(this.queryData, "QueryURA").subscribe({
         next: (data) => {
           try {
+            console.log("prn response", data)
             // Validate response
-            if (!data || data.status !== "SUCCESS" || data.code !== "200") {
+            if (data.status.toUpperCase() !== "SUCCESS" || data.code !== "200") {
               this.globalMethods.presentAlert(
                 "Error",
                 data.message || "Invalid PRN response"
@@ -184,7 +185,8 @@ export class PayUraPage implements OnInit {
 
             // Safely populate form controls
             this.details = data.details || {};
-            if (this.details.statusDesc !== "available") {
+            console.log("details", this.details)
+            if (this.details.prnStatus.toUpperCase() !== "A") {
               this.globalMethods.presentAlert(
                 "Error", this.details.statusDesc || "Invalid PRN"
               );
@@ -201,7 +203,8 @@ export class PayUraPage implements OnInit {
               charges: this.details.charges || '0',
               commission: this.details.commission || '0'
             });
-          } catch (parseError) {
+          } catch (error) {
+            console.log("Error: ", error)
             this.globalMethods.presentAlert("Error", "Unable to process server response");
           } finally {
             loading.dismiss();
@@ -252,26 +255,26 @@ export class PayUraPage implements OnInit {
           return;
         }
         // Check transaction limit
-        if (transactionAmount > this.user.transactionLimit) {
-          loading.dismiss();
-          this.globalMethods.presentAlert("Error", "Amount exceeds your transaction limit");
-          return;
-        }
+        // if (transactionAmount > this.user.transactionLimit) {
+        //   loading.dismiss();
+        //   this.globalMethods.presentAlert("Error", "Amount exceeds your transaction limit");
+        //   return;
+        // }
 
         console.log("PRn Details : ", this.details)
 
         const totalAmount = parseFloat(this.FormData.controls['amount'].value) + parseFloat(this.FormData.controls['charges'].value);
 
         this.transactionData = {
-          accountToDebit: floatAccountNumber,
+          accountToDebit: floatAccount?.accountNumber,
           prn: this.FormData.controls['prn'].value.toString(),
           prnStatusCode: this.FormData.controls['prnStatus'].value,
           taxPayerName: this.FormData.controls['payerName'].value,
           amount: this.FormData.controls['amount'].value.toString(),
           tin: this.FormData.controls['tin'].value,
           //TODO Update charges to be dynamic from server
-          //charges: this.FormData.controls['charges'].value,
-          charges: "2550",
+          charges: this.FormData.controls['charges'].value,
+          //charges: "2550",
           initiatedBy: this.user.userId,
           source: "APP",
           customerId: this.user.customerId,

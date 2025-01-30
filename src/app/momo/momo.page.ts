@@ -66,6 +66,14 @@ export class MomoPage implements OnInit {
       remarks: ['', Validators.required],
     });
 
+    this.accounts = this.globalMethods.getUserData<{
+      accountNumber: string;
+      balance: string;
+      accountName: string;
+      accountTypeId: string;
+      accountType: string;
+    }[]>('accounts') || [];
+
     this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
   }
 
@@ -89,8 +97,8 @@ export class MomoPage implements OnInit {
 
 
       const transData = {
-        phonenumber: this.FormData.controls['phone'].value,
-        accountToCredit: floatAccount,
+        phonenumber: this.FormData.controls['phone'].value.toString(),
+        accountToCredit: floatAccount?.accountNumber.toString(),
         amount: this.FormData.controls['amount'].value.toString(),
         requestedBy: this.user.userId,
         remarks: this.FormData.controls['remarks'].value,
@@ -100,7 +108,9 @@ export class MomoPage implements OnInit {
         productId: "string"
       }
 
-      this.finance.PostData(transData, 'topUpWithMomo').subscribe({
+      console.log("transDate: ", transData)
+
+      this.finance.PostData(transData, 'MobileMoneyCollection').subscribe({
         next: (data: any) => {
           const s = JSON.stringify(data);
           const resp = JSON.parse(s);
@@ -146,6 +156,9 @@ export class MomoPage implements OnInit {
 
     } catch (error) {
 
+    }
+    finally {
+      loading.dismiss()
     }
   }
 }
