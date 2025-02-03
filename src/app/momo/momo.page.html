@@ -22,6 +22,23 @@
     </div>
     <br />
 
+
+    <ion-button expand="block" type="submit" [disabled]="FormData.controls['phone'].invalid">
+      Validate number
+    </ion-button>
+
+    <ion-item>
+      <ion-input
+        formControlName="name"
+        label="Remarks"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter remarks"
+        readonly="true"
+      ></ion-input>
+    </ion-item>
+
     <ion-item>
       <ion-input
         formControlName="amount"

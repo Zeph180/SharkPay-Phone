@@ -3,6 +3,23 @@ import { Router } from '@angular/router';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
 import Swiper from 'swiper';
 import { FinanceService } from '../sharkServices/finance.service';
+
+interface User {
+  names: string;
+  email: string;
+  role: string;
+  roleId: string;
+  customerId: string;
+  customerName: string;
+  userType: string;
+  userTypeId: string;
+  username: string;
+  lastloginDate: string;
+  userId: string;
+  transactionLimit: string;
+  ispasswordChangeRequired: string;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
@@ -58,6 +75,22 @@ export class HomePage implements OnInit {
     accountType: string
   }[] = []
 
+  public user: User = {
+    names: '',
+    email: '',
+    role: '',
+    roleId: '',
+    customerId: '',
+    customerName: '',
+    userType: '',
+    userTypeId: '',
+    username: '',
+    lastloginDate: '',
+    userId: '',
+    transactionLimit: '',
+    ispasswordChangeRequired: ''
+  };
+
   public swiper!: Swiper
   isLoading: boolean = true; // Loader state
 
@@ -73,6 +106,22 @@ export class HomePage implements OnInit {
       accountTypeId: string;
       accountType: string;
     }[]>('accounts') || [];
+
+    this.user = this.globalMethods.getUserData<User>('user') || {
+      names: '',
+      email: '',
+      role: '',
+      roleId: '',
+      customerId: '',
+      customerName: '',
+      userType: '',
+      userTypeId: '',
+      username: '',
+      lastloginDate: '',
+      userId: '',
+      transactionLimit: '',
+      ispasswordChangeRequired: ''
+    };
 
     this.queryTransactions();
   }
@@ -104,7 +153,7 @@ export class HomePage implements OnInit {
       postedBy: "",
       dateFrom: "",
       dateTo: "",
-      customer: "",
+      customer: this.user.customerId,
       createdBy: ""
     }
 

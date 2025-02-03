@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { GlobalMethodsService } from '../helpers/global-methods.service';
 import { FinanceService } from '../sharkServices/finance.service';
 import { NavigationExtras } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 interface User {
   names: string;
@@ -64,6 +65,7 @@ export class MomoPage implements OnInit {
       amount: ['', Validators.required],
       phone: ['', Validators.required],
       remarks: ['', Validators.required],
+      name: ['']
     });
 
     this.accounts = this.globalMethods.getUserData<{
@@ -80,6 +82,48 @@ export class MomoPage implements OnInit {
   ngOnInit() {
   }
 
+  async validatePhoneNumber() {
+    const loading = await this.globalMethods.presentLoading();
+
+    try {
+      if (this.FormData.invalid) {
+        this.globalMethods.presentAlert('Error', 'Please fill in all required fields');
+        return;
+      }
+
+      const transData = {
+        phonenumber: this.FormData.controls['phone'].value.toString(),
+        requestedBy: this.user.userId,
+      }
+
+      this.finance.PostData(transData, 'ValidatePhoneNumber').subscribe({
+        next: (data: any) => {
+          const s = JSON.stringify(data);
+          const resp = JSON.parse(s);
+          console.log("ggdgd", resp)
+          if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
+            this.globalMethods.presentAlert(
+              "Error", resp.message || "An error occured. Please try again"
+            );
+            return;
+          }
+
+          this.FormData.controls['name'].setValue(resp.name)
+        },
+        error: (error) => {
+          this.globalMethods.presentAlert('Error', 'An error occurred. Please try again later');
+        },
+        complete: () => {
+          loading.dismiss();
+        }
+      })
+    } catch (error) {
+
+    } finally {
+
+    }
+  }
+
   async topUpWithMomo() {
     const loading = await this.globalMethods.presentLoading();
 
@@ -94,7 +138,6 @@ export class MomoPage implements OnInit {
       const floatAccount = this.accounts.find(account =>
         account.accountName.toLowerCase() === "float account"
       );
-
 
       const transData = {
         phonenumber: this.FormData.controls['phone'].value.toString(),

@@ -119,8 +119,8 @@ export class PrintPage implements OnInit {
       var receipt = ``;
 
       this.transaction.product == 'URA Payment' ?
-        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter :
-        receipt = receiptHeader + receiptDetails + receiptFooter;
+        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter + receiptHeader :
+        receipt = receiptHeader + receiptDetails + receiptFooter + receiptHeader;
 
       // Step 4: Print the receipt text
       await NexgoSDKNew['printText']({
