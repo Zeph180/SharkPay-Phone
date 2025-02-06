@@ -76,6 +76,22 @@ export class MomoPage implements OnInit {
       accountType: string;
     }[]>('accounts') || [];
 
+    this.user = this.globalMethods.getUserData<User>('user') || {
+      names: '',
+      email: '',
+      role: '',
+      roleId: '',
+      customerId: '',
+      customerName: '',
+      userType: '',
+      userTypeId: '',
+      username: '',
+      lastloginDate: '',
+      userId: '',
+      transactionLimit: '',
+      ispasswordChangeRequired: ''
+    };
+
     this.deviceId = this.globalMethods.getUserData2('deviceID') || '';
   }
 
@@ -86,7 +102,7 @@ export class MomoPage implements OnInit {
     const loading = await this.globalMethods.presentLoading();
 
     try {
-      if (this.FormData.invalid) {
+      if (this.FormData.controls['phone'].invalid) {
         this.globalMethods.presentAlert('Error', 'Please fill in all required fields');
         return;
       }
@@ -96,7 +112,7 @@ export class MomoPage implements OnInit {
         requestedBy: this.user.userId,
       }
 
-      this.finance.PostData(transData, 'ValidatePhoneNumber').subscribe({
+      this.finance.PostData(transData, 'ValidatePhonenumber').subscribe({
         next: (data: any) => {
           const s = JSON.stringify(data);
           const resp = JSON.parse(s);
@@ -111,6 +127,7 @@ export class MomoPage implements OnInit {
           this.FormData.controls['name'].setValue(resp.name)
         },
         error: (error) => {
+          console.log("error :", error)
           this.globalMethods.presentAlert('Error', 'An error occurred. Please try again later');
         },
         complete: () => {
@@ -143,12 +160,13 @@ export class MomoPage implements OnInit {
         phonenumber: this.FormData.controls['phone'].value.toString(),
         accountToCredit: floatAccount?.accountNumber.toString(),
         amount: this.FormData.controls['amount'].value.toString(),
-        requestedBy: this.user.userId,
+        initiatedBy: this.user.userId,
         remarks: this.FormData.controls['remarks'].value,
         terminalId: this.deviceId.toString(),
         customerId: this.user.customerId,
+        source: "App",
         //TODO ADD PRODUCT ID
-        productId: "string"
+        productId: "4"
       }
 
       console.log("transDate: ", transData)

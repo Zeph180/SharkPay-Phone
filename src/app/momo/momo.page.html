@@ -23,14 +23,14 @@
     <br />
 
 
-    <ion-button expand="block" type="submit" [disabled]="FormData.controls['phone'].invalid">
+    <ion-button expand="block" type="button" (click)="validatePhoneNumber()" [disabled]="FormData.controls['phone'].invalid">
       Validate number
     </ion-button>
 
     <ion-item>
       <ion-input
         formControlName="name"
-        label="Remarks"
+        label="Name"
         type="text"
         label-placement="floating"
         fill="outline"

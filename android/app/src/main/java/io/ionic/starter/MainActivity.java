@@ -19,8 +19,8 @@ public class MainActivity extends BridgeActivity {
         DeviceEngine deviceEngine = APIProxy.getDeviceEngine(this);
 
         // Example: Get the beeper object and ring for 500 milliseconds
-//        Beeper beeper = deviceEngine.getBeeper();
-//        beeper.beep(500);
+        // Beeper beeper = deviceEngine.getBeeper();
+        // beeper.beep(500);
     }
 }
 

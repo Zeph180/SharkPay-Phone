@@ -263,7 +263,8 @@ export class PayUraPage implements OnInit {
 
         console.log("PRn Details : ", this.details)
 
-        const totalAmount = parseFloat(this.FormData.controls['amount'].value) + parseFloat(this.FormData.controls['charges'].value);
+        //const totalAmount = parseFloat(this.FormData.controls['amount'].value) + parseFloat(this.FormData.controls['charges'].value);
+        const totalAmount = parseFloat(this.FormData.controls['amount'].value);
 
         this.transactionData = {
           accountToDebit: floatAccount?.accountNumber,
