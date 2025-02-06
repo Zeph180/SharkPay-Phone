@@ -112,15 +112,15 @@ export class PrintPage implements OnInit {
       });
 
       // Step 3: Prepare receipt content
-      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n            Receipt         \n--------------------------------\n`;
-      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} \n--------------------------------\n`;
+      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n--------------------------------\n`;
+      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} `;
       const uraAdditional = ` PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer}\n\n`;
-      const receiptFooter = ` Thank you for paying with us!`;
+      const receiptFooter = `  For support call: 0200190112  \n  Email: support@sharkpay.co.ug     Website: sharkpay.co.ug    \n   Powered by Utrax Agency Ltd  \n     Supported by GTBank  \n--------------------------------\n Thank you for paying with us!`;
       var receipt = ``;
 
       this.transaction.product == 'URA Payment' ?
         receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter + receiptHeader :
-        receipt = receiptHeader + receiptDetails + receiptFooter + receiptHeader;
+        receipt = receiptHeader + receiptDetails + receiptHeader + receiptFooter;
 
       // Step 4: Print the receipt text
       await NexgoSDKNew['printText']({

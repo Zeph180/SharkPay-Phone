@@ -18,4 +18,4 @@ include ':capacitor-status-bar'
 project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
 
 include ':nexgsdknew'
-project(':nexgsdknew').projectDir = new File('../../nexgoSDKNew/android')
+project(':nexgsdknew').projectDir = new File('../../../../Desktop/nexgoSDKNew/android')
