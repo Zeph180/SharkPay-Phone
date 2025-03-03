@@ -82,7 +82,7 @@ class="ion-text-center service-item"
     <ion-item
       *ngFor="let transaction of transactions"
       lines="full"
-      (click)="goToPrintPage(transaction)"
+      (click)="queryTransactionDetails(transaction.transactionReference, transaction.productID, transaction.product)"
       >
       <!-- Transaction Details -->
       <ion-label class="ion-text-wrap">
@@ -98,6 +98,7 @@ class="ion-text-center service-item"
             {{ transaction.transDate }}
           </p>
         </div>
+        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'" style="font-size: 10px;">{{transaction.remarks || ''}}</ion-text>
       </ion-label>
 
       <!-- Transaction Amount -->

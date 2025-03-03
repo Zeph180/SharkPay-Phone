@@ -5,6 +5,7 @@ import { GlobalMethodsService } from '../helpers/global-methods.service';
 import { FinanceService } from '../sharkServices/finance.service';
 import { NavigationExtras } from '@angular/router';
 import { formatDate } from '@angular/common';
+import { TransactionStatusService } from '../sharkServices/background.service';
 
 interface User {
   names: string;
@@ -60,6 +61,7 @@ export class MomoPage implements OnInit {
     private globalMethods: GlobalMethodsService,
     private finance: FinanceService,
     public navCtrl: NavController,
+    public backgroundService: TransactionStatusService
   ) {
     this.FormData = fb.group({
       amount: ['', Validators.required],
@@ -96,6 +98,7 @@ export class MomoPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log("")
   }
 
   async validatePhoneNumber() {
@@ -177,9 +180,30 @@ export class MomoPage implements OnInit {
           const resp = JSON.parse(s);
 
           if (resp.code !== '200' || resp.status.toUpperCase() !== 'SUCCESS') {
+            var errMsg = '';
+            if (resp.code === '201') {
+              errMsg = 'Success'
+              this.FormData.reset();
+              const statusTransData = {
+                transactionId: data.transactionId,
+                initiatedBy: this.user.userId,
+                source: "App",
+                terminalId: this.deviceId,
+                customerId: this.user.customerId,
+                productId: "string"
+              };
+              resp.message = 'Waiting for customer to enter mobile money pin'
+              this.backgroundService.startTransactionStatusCheck(statusTransData);
+            } else {
+              errMsg = 'Error'
+              this.backgroundService.stopTransactionStatusCheck();
+            }
+
             this.globalMethods.presentAlert(
-              "Error", resp.message || "An error occured. Please try again"
+              errMsg , resp.message || "An error occured. Please try again"
             );
+            loading.dismiss();
+            //resp.code === '201' ? this.backgroundService.startTransactionStatusCheck()
             return;
           }
 
@@ -205,21 +229,18 @@ export class MomoPage implements OnInit {
               transaction: JSON.stringify(receiptData)
             }
           }
+          loading.dismiss();
           this.navCtrl.navigateForward('print', navigationExtras);
         },
         error: (error) => {
           this.globalMethods.presentAlert('Error', 'An error occurred. Please try again later');
         },
         complete: () => {
-          loading.dismiss();
         }
       })
 
     } catch (error) {
 
-    }
-    finally {
-      loading.dismiss()
     }
   }
 }

@@ -80,6 +80,7 @@ export class ResetPaasswordPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log("")
   }
 
   async resetPassword() {
@@ -90,8 +91,8 @@ export class ResetPaasswordPage implements OnInit {
         username: this.user.username,
         oldPassword: this.resetPasswordForm.controls['oldPassword'].value.toString(),
         newPassword: this.resetPasswordForm.controls['newPassword'].value.toString(),
-        customerId: this.user.userId,
-        updatedBy: this.user.customerId,
+        customerId: this.user.customerId, 
+        updatedBy: this.user.userId,
         device: this.deviceId,
       }
 
@@ -99,6 +100,7 @@ export class ResetPaasswordPage implements OnInit {
       this.authService.PostData(postData, 'ResetPassword').subscribe({
         next: (data) => {
           try {
+            console.log('Reset pwd resp', data)
             if (!data || data.status !== "SUCCESS" || data.code !== "200") {
               this.globalMethods.presentAlert(
                 "Error",

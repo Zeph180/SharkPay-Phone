@@ -95,8 +95,8 @@ export class LoginPage implements OnInit {
             console.log("USER: ", response.user)
             if (response.user.ispasswordChangeRequired === 'True') {
               console.log("IN PASSWORD RESET", response.user.ispasswordChangeRequired)
-              // this.router.navigate(['/reset-paassword']);
-              this.router.navigate(['/home']);
+              this.router.navigate(['/reset-paassword']);
+              // this.router.navigate(['/home']);
             }
             else {
               // Navigate to home page on successful login

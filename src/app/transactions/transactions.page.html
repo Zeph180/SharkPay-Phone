@@ -46,6 +46,9 @@
             {{ transaction.transDate }}
           </p>
         </div>
+          <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'"
+            style="font-size: 10px;">{{transaction.remarks || ''}}
+          </ion-text>
       </ion-label>
 
       <!-- Transaction Amount -->

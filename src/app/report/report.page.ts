@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingController, MenuController, NavController } from '@ionic/angular';
 import { GlobalMethodsService } from '../helpers/global-methods.service';
 import { FinanceService } from '../sharkServices/finance.service';
-import { Router } from '@angular/router';
+import { DatePipe, formatDate } from '@angular/common';
 
 interface User {
   names: string;
@@ -20,11 +23,38 @@ interface User {
 }
 
 @Component({
-  selector: 'app-transactions',
-  templateUrl: './transactions.page.html',
-  styleUrls: ['./transactions.page.scss'],
+  selector: 'app-report',
+  templateUrl: './report.page.html',
+  styleUrls: ['./report.page.scss'],
 })
-export class TransactionsPage implements OnInit {
+export class ReportPage implements OnInit {
+  FormData: FormGroup;
+  userdata: any;
+  details: any;
+  cred: any;
+  searchData: any;
+  returnedData: any;
+  showStartDateCalendar: boolean = false;
+  showEndDateCalendar: boolean = false;
+  isLoading: boolean = true; // Loader state
+
+
+  public user: User = {
+    names: '',
+    email: '',
+    role: '',
+    roleId: '',
+    customerId: '',
+    customerName: '',
+    userType: '',
+    userTypeId: '',
+    username: '',
+    lastloginDate: '',
+    userId: '',
+    transactionLimit: '',
+    ispasswordChangeRequired: ''
+  };
+
   public transactions: {
     transactionID: string;
     account: string;
@@ -45,32 +75,22 @@ export class TransactionsPage implements OnInit {
     transferedByName: string;
   }[] = [];
   public filteredTransactions: any[] = [];
-  public categories: string[] = ['All', 'Credit', 'Debit'];
-  public selectedCategory: string = 'All';
-  isLoading: boolean = true; // Loader state
-
-  public user: User = {
-    names: '',
-    email: '',
-    role: '',
-    roleId: '',
-    customerId: '',
-    customerName: '',
-    userType: '',
-    userTypeId: '',
-    username: '',
-    lastloginDate: '',
-    userId: '',
-    transactionLimit: '',
-    ispasswordChangeRequired: ''
-  };
 
 
-  constructor(
-    public globalMethods: GlobalMethodsService,
+  constructor (
+    public fb: FormBuilder,
+    public navCtrl: NavController,
+    public loadingController: LoadingController,
+    public menuCtrl: MenuController,
+       public globalMethods: GlobalMethodsService,
     public finance: FinanceService,
-    public router: Router
-  ) {
+  ) { 
+    this.FormData = this.fb.group({
+      Account: ['', Validators.required],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+    });
+
     this.user = this.globalMethods.getUserData<User>('user') || {
       names: '',
       email: '',
@@ -88,23 +108,35 @@ export class TransactionsPage implements OnInit {
     };
 
     this.queryTransactions();
-   }
+  }
 
   ngOnInit() {
-    console.log(this.user)
+    console.log("")
+  }
+
+  showCalendar(inputName: string) {
+    if (inputName === 'startDate') {
+      this.showStartDateCalendar = true;
+    } else if (inputName === 'endDate') {
+      this.showEndDateCalendar = true;
+    }
   }
 
   async queryTransactions() {
+    var startDate = this.getFormattedDate(this.FormData.controls['startDate'].value)
+    var endDate = this.getFormattedDate(this.FormData.controls['endDate'].value)
     const queryData = {
       transactionID: "",
       product: "",
       status: "",
       postedBy: "",
-      dateFrom: "",
-      dateTo: "",
+      dateFrom: startDate|| '',
+      dateTo: endDate|| '',
       customer: this.user.customerId,
       createdBy: ""
     }
+
+    console.log("TRACKING data :", queryData)
 
     const loading = await this.globalMethods.presentLoading(); // Show a loading spinner
     this.isLoading = true
@@ -116,9 +148,11 @@ export class TransactionsPage implements OnInit {
 
           // Validate the response
           if (!data || data.message !== 'Data Retrieved Successfully') {
+            var msg = '';
+            data.code === '109' ? msg = 'No transactions found in the provide date range' :  msg = 'Failed to retrieve transactions.' 
             this.globalMethods.presentAlert(
               'Error',
-              data?.message || 'Failed to retrieve transactions.'
+              data?.message || msg
             );
             return;
           }
@@ -157,27 +191,10 @@ export class TransactionsPage implements OnInit {
     }
   }
 
-  // Filter transactions based on category
-  filterTransactions(category: string) {
-    this.selectedCategory = category;
-
-    if (category === 'All') {
-      this.filteredTransactions = [...this.transactions];
-    } else if (category === 'Credit') {
-      this.filteredTransactions = this.transactions.filter(
-        (transaction) => transaction.transType.toUpperCase() === 'CREDIT'
-      );
-    } else if (category === 'Debit') {
-      this.filteredTransactions = this.transactions.filter(
-        (transaction) => transaction.transType.toUpperCase() === 'DEBIT'
-      );
+  getFormattedDate(date: any) {
+    if (date) {
+      return new Date(date).toISOString().split('T')[0];
     }
-  }
-
-  goToPrintPage(transaction: any) {
-    // Navigate to the PrintPage and pass the transaction as a query parameter
-    this.router.navigate(['/print'], {
-      queryParams: { transaction: JSON.stringify(transaction) },
-    });
+    return '';
   }
 }

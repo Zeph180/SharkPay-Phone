@@ -207,6 +207,82 @@ export class HomePage implements OnInit {
     }
   }
 
+  async queryTransactionDetails(tranRef: string, product: string, prodName: string) {
+    const queryData = {
+      transactionID: tranRef,
+      product: product,
+      status: "",
+      postedBy: "",
+      dateFrom: "",
+      dateTo: "",
+      customer: this.user.customerId,
+      createdBy: ""
+    }
+
+    console.log("Details data: ", queryData)
+
+    if (queryData.product !== '4') {
+      this.globalMethods.presentAlert('Sorry', 'Action available for on URA payments!');
+      return;
+    }
+
+    const loading = await this.globalMethods.presentLoading(); // Show a loading spinner
+    this.isLoading = true
+    try {
+      // Fetch data from the backend
+      this.finance.PostData(queryData, 'getTransactionDetails').subscribe({
+        next: (data) => {
+          console.log('Tran Details API Response:', data);
+
+          // Validate the response
+          if (!data || data.message !== 'Data Retrieved Successfully') {
+            this.globalMethods.presentAlert(
+              'Error',
+              data?.message || 'Failed to retrieve transactions.'
+            );
+            return;
+          }
+
+          // Check if transactions are present
+          if (!data.transactionDetails || data.transactionDetails.length === 0) {
+            this.globalMethods.presentAlert(
+              'Error',
+              'No transactions found for the selected criteria.'
+            );
+            return;
+          }
+
+          // Assign transactions to the local property
+          const transaction = data.transactionDetails[0];
+          transaction.product = product;
+          transaction.productName = prodName;
+          transaction.userName = this.user.customerName;
+          console.log('Retrieved Transactions:', transaction);
+          this.router.navigate(['/print'], {
+            queryParams: { transaction: JSON.stringify(transaction) },
+          });
+        },
+        error: (error) => {
+          console.error('Error while fetching transactions:', error);
+          this.globalMethods.presentAlert(
+            'Error',
+            'An error occurred while fetching transactions.'
+          );
+        },
+      });
+    } catch (error) {
+      console.error('Exception in queryTransactions:', error);
+      this.globalMethods.presentAlert(
+        'Exception',
+        'An unexpected error occurred.'
+      );
+    } finally {
+      loading.dismiss(); // Dismiss the loading spinner in all cases
+      this.isLoading = false
+    }
+  }
+
+
   goToPrintPage(transaction: any) {
     // Navigate to the PrintPage and pass the transaction as a query parameter
     this.router.navigate(['/print'], {

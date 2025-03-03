@@ -99,6 +99,10 @@ const routes: Routes = [
   },  {
     path: 'momo',
     loadChildren: () => import('./momo/momo.module').then( m => m.MomoPageModule)
+  },
+  {
+    path: 'report',
+    loadChildren: () => import('./report/report.module').then( m => m.ReportPageModule)
   }
 
 ];

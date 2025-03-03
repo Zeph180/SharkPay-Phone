@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
     { title: 'Home', url: '/home', icon: 'home' },
     { title: 'Payments', url: '/payments', icon: 'shuffle' },
     { title: 'Transactions', url: '/transactions', icon: 'list' },
+    { title: 'Report', url: '/report', icon: 'list' },
     { title: 'Account', url: '/my-account', icon: 'person' },
     // { title: 'Print', url: '/print', icon: 'warning' },
     { title: 'App Updates', url: '/', icon: 'appstore' },

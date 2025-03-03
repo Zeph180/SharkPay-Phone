@@ -34,6 +34,9 @@ export class PrintPage implements OnInit {
     prn: string;
     payer: string;
     userName: string;
+    transactionDate: string;
+    taxPayerName: string;
+    productName: string;
   } = {
       transactionID: '',
       account: '',
@@ -57,7 +60,10 @@ export class PrintPage implements OnInit {
       contact: '',
       prn: '',
       payer: '',
-      userName: ''
+      userName: '',
+      transactionDate: '',
+      taxPayerName: '',
+      productName: ''
     }
 
   constructor(
@@ -111,15 +117,17 @@ export class PrintPage implements OnInit {
         base64Image: logoBase64,
       });
 
+      console.log("receipt data:", this.transaction)
+
       // Step 3: Prepare receipt content
       const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n--------------------------------\n`;
-      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.product}\n Date:        ${this.transaction.transDate}\n Account:     ${this.transaction.account}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount}\n Charges:     ${this.transaction.charges}\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} `;
-      const uraAdditional = ` PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer}\n\n`;
+      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.productName}\n Date:       ${this.transaction.transDate || this.transaction.transactionDate}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount.replace('.0000', '')}\n Charges:     ${this.transaction.charges.replace('.0000', '') }\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} `;
+      const uraAdditional = `\n--------------------------------\n PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer || this.transaction.taxPayerName}\n--------------------------------\n`;
       const receiptFooter = `  For support call: 0200190112  \n  Email: support@sharkpay.co.ug     Website: sharkpay.co.ug    \n   Powered by Utrax Agency Ltd  \n     Supported by GTBank  \n--------------------------------\n Thank you for paying with us!`;
       var receipt = ``;
 
-      this.transaction.product == 'URA Payment' ?
-        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter + receiptHeader :
+      this.transaction.productName == 'URA' ?
+        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter :
         receipt = receiptHeader + receiptDetails + receiptHeader + receiptFooter;
 
       // Step 4: Print the receipt text
@@ -132,7 +140,7 @@ export class PrintPage implements OnInit {
 
       // Step 5: Start the print process
       await NexgoSDKNew['startPrint']();
-      this.router.navigate(['/home']);
+      this.navigateToHome();
     } catch (error) {
       console.error('Printing failed:', error);
     }

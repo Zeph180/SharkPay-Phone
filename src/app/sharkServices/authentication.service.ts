@@ -86,6 +86,11 @@ export class AuthenticationService {
     localStorage.setItem(key, data);
   }
 
+  updateAccounts(data: any) {
+    localStorage.removeItem('accounts');
+    this.storeUserData('accounts', data)
+  }
+
   logout() {
     localStorage.removeItem('userToken');
     this.router.navigate(['/login']);
