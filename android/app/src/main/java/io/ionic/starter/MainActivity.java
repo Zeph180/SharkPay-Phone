@@ -23,4 +23,3 @@ public class MainActivity extends BridgeActivity {
         // beeper.beep(500);
     }
 }
-

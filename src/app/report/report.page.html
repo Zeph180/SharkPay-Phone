@@ -17,8 +17,11 @@
   <ion-input label="End Date" mode="md" label-placement="stacked" fill="outline" type="date"
     placeholder="Select End Date" formControlName="endDate" (click)="showCalendar('endDate')"></ion-input>
 
+  <ion-input label="Prn" mode="md" label-placement="stacked" fill="outline" type="text"
+    placeholder="Enter PRN" formControlName="prn"></ion-input>
+
   <div lines="none">
-    <ion-button expand="block" size="default" class="Continue btnSubmit" type="Submit">Search</ion-button>
+    <ion-button expand="block" size="default" class="Continue btnSubmit" [disabled]="!isFormValid()" type="Submit">Search</ion-button>
   </div>
 </form>
 

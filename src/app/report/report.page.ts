@@ -89,6 +89,7 @@ export class ReportPage implements OnInit {
       Account: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
+      prn: ['', Validators.pattern('^[0-9]*$')],
     });
 
     this.user = this.globalMethods.getUserData<User>('user') || {
@@ -122,6 +123,18 @@ export class ReportPage implements OnInit {
     }
   }
 
+
+  isFormValid(): boolean {
+    const startDate = this.FormData.get('startDate')?.value;
+    const endDate = this.FormData.get('endDate')?.value;
+    const prn = this.FormData.get('prn')?.value;
+
+    const hasDates = startDate && endDate;
+    const hasPrn = prn && prn.trim() !== '';
+
+    return hasDates || hasPrn;
+  }
+
   async queryTransactions() {
     var startDate = this.getFormattedDate(this.FormData.controls['startDate'].value)
     var endDate = this.getFormattedDate(this.FormData.controls['endDate'].value)
@@ -133,17 +146,23 @@ export class ReportPage implements OnInit {
       dateFrom: startDate|| '',
       dateTo: endDate|| '',
       customer: this.user.customerId,
-      createdBy: ""
+      createdBy: "",
+      prn: this.FormData.controls['prn'].value || '',
     }
 
-    console.log("TRACKING data :", queryData)
 
     const loading = await this.globalMethods.presentLoading(); // Show a loading spinner
     this.isLoading = true
     try {
+      var endpoint = 'getfilteredtransactions';
+      if (this.FormData.controls['prn'].value) {
+        endpoint = 'getFilteredUraTransactions';
+        queryData.product = '4';
+      } 
       // Fetch data from the backend
-      this.finance.PostData(queryData, 'getfilteredtransactions').subscribe({
+      this.finance.PostData(queryData, endpoint).subscribe({
         next: (data) => {
+          console.log("RequestData : ", queryData);
           console.log('API Response:', data);
 
           // Validate the response
@@ -179,6 +198,7 @@ export class ReportPage implements OnInit {
           );
         },
       });
+
     } catch (error) {
       console.error('Exception in queryTransactions:', error);
       this.globalMethods.presentAlert(
