@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>commissionTransactions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ion-item *ngFor="let transaction of transactions" lines="full">
+      <!-- Transaction Details -->
+      <ion-label class="ion-text-wrap">
+        <ion-text [color]="transaction.transType === 'credit' ? 'success' : 'danger'">
+          <h2>{{ transaction.transType }}</h2>
+        </ion-text>
+        <div style="display: flex; ">
+          <span style="background-color:rgb(219, 211, 211); border-radius: 50%; width: 50px; height: 50px; padding: 3.5%;">
+            <ion-icon name="checkmark-done-circle-outline" size="large" color="white"></ion-icon>
+          </span>
+
+          <p style="background-color: aliceblue; width: 70%; padding-inline: 10px; padding-top: 5%; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+            {{ transaction.transDate }}
+          </p>
+        </div>
+      </ion-label>
+
+      <!-- Transaction Amount -->
+      <ion-label
+      class="ion-text-wrap"
+      style="flex: 0 0 30%; text-align: right; padding: 5px;"
+      >
+        <ion-text color="primary">{{ transaction.amount }}</ion-text>
+        <br />
+        <ion-text>{{ transaction.transactionID }}</ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

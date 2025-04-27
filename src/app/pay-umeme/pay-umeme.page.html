@@ -1,0 +1,165 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>UMEME</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="FormData" (ngSubmit)="payUmeme()" style="margin-top: 20px;" hidden>
+    <!-- TIN -->
+    <ion-item>
+      <ion-input
+        formControlName="meterNumber"
+        label="Meter Number"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter umeme meter number"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('meterNumber')?.invalid && FormData.get('meterNumber')?.touched" class="error">
+      <small *ngIf="FormData.get('meterNumber')?.errors?.['required']">Meter number is required</small>
+      <small *ngIf="FormData.get('meterNumber')?.errors?.['minlength']">Meter number must be at least 10 characters</small>
+    </div>
+    <br />
+
+    <ion-item>
+      <ion-input
+        formControlName="amount"
+        label="Amount"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter amount"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+      <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+    </div>
+    <br />
+
+    <ion-button expand="block" (click)="queryMeter()" [disabled]="FormData.get('prn')?.invalid" *ngIf="!meterValidated">
+      Query Meter
+    </ion-button>
+
+    <div *ngIf="meterValidated">
+      <ion-item>
+        <ion-input
+          formControlName="payerName"
+          label="Name"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Meter name"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="type"
+          label="Meter Type"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Meter type"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="credit"
+          label="Credit"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Credit"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="balance"
+          label="Balance"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Meter name"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="charges"
+          label="Charges"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Charges"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="commission"
+          label="Commission"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="commission"
+          readonly="true"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="phone"
+          label="Telephone"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Telephone number"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="FormData.get('reference')?.invalid && FormData.get('reference')?.touched" class="error">
+        <small *ngIf="FormData.get('reference')?.errors?.['required']">Payment Reference is required</small>
+      </div>
+      <br />
+
+      <ion-button expand="block" type="submit" [disabled]="FormData.invalid">
+        Submit Payment
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

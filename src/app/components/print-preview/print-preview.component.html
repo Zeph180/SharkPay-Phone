@@ -1,0 +1,12 @@
+<!-- src/app/components/print-preview/print-preview.component.html -->
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Print Preview</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <pre class="receipt-preview">{{ order ? (order | json) : content }}</pre>
+  </ion-card-content>
+
+  <ion-button expand="block" (click)="print()">Print</ion-button>
+</ion-card>

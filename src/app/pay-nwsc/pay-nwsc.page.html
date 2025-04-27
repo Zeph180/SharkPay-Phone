@@ -1,0 +1,142 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pay NWSC</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="payNWSCForm" (ngSubmit)="payNWSC()">
+  <ion-item>
+      <ion-input
+        formControlName="meterNumber"
+        label="Meter Number"
+        type="text"
+        required
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter meter number">
+      </ion-input>
+  </ion-item>
+  <br />
+
+  <ion-item>
+    <ion-input
+      formControlName="amount"
+      label="Amount"
+      type="number"
+      required
+      label-placement="floating"
+      fill="outline"
+      placeholder="Enter amount"
+      style="margin-top: 10px;"
+      >
+    </ion-input>
+  </ion-item>
+  <br />
+
+  <ion-item>
+    <ion-select
+      formControlName="area"
+      label="Area"
+      label-placement="floating"
+      fill="outline"
+      placeholder="Select area"
+      >
+      <ion-select-option *ngFor="let area of areas" [value]="area.area">
+        {{ area.area }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <br />
+
+    <ion-button expand="block" (click)="queryNWSC(payNWSCForm.controls['meterNumber'].value)" [disabled]="payNWSCForm.get('meterNumber')?.invalid || payNWSCForm.get('amount')?.invalid" *ngIf="!meterValidated">
+      Query NWSC
+    </ion-button>
+
+    <div *ngIf="meterValidated">
+      <ion-item>
+        <ion-input
+          formControlName="name"
+          label="Name"
+          type="text"
+          readonly="true"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Registration Status">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="registrationStatus"
+          label="Reg Status"
+          type="tel"
+          readonly="true"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Registration Status">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="outstandingBalance"
+          label="Outstanding Balance"
+          type="number"
+          readonly="true"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Outstanding Balance">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="charges"
+          label="Charges"
+          type="number"
+          readonly="true"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Charges">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="commission"
+          label="Commission"
+          type="number"
+          readonly="true"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Commission">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="phoneNumber"
+          label="Phone Number"
+          type="tel"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Enter phone number">
+        </ion-input>
+      </ion-item>
+      <br />
+
+      <ion-button expand="block" type="submit" [disabled]="payNWSCForm.invalid">
+        Submit
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -1,0 +1,75 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transfer Float</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="FormData" (ngSubmit)="transferFloat()" style="margin-top: 20px;">
+    <ion-item>
+      <ion-input
+        formControlName="acc2Credit"
+        label="Account to credit"
+        type="text"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter account to credit"
+      ></ion-input>
+    </ion-item>
+    <div *ngIf="FormData.get('acc2Credit')?.invalid && FormData.get('acc2Credit')?.touched" class="error">
+      <small *ngIf="FormData.get('acc2Credit')?.errors?.['required']">Account is required</small>
+      <small *ngIf="FormData.get('acc2Credit')?.errors?.['minlength']">Account must be at least 10 characters</small>
+    </div>
+    <br />
+    <ion-button expand="block" (click)="validateAccount()" [disabled]="FormData.get('prn')?.invalid" *ngIf="!accountValidated">
+      Validate
+    </ion-button>
+
+    <div *ngIf="accountValidated">
+      <ion-item>
+        <ion-input
+          formControlName="accName"
+          label="Account Name"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          readonly="true"
+          placeholder="Account name"
+        ></ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="amount"
+          label="Amount"
+          type="number"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Enter amount"
+        ></ion-input>
+      </ion-item>
+      <br />
+
+      <ion-item>
+        <ion-input
+          formControlName="remarks"
+          label="Remarks"
+          type="text"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Enter remarks"
+        ></ion-input>
+      </ion-item>
+      <br />
+
+      <ion-button expand="block" type="submit" [disabled]="FormData.invalid">
+        Submit Payment
+      </ion-button>
+    </div>
+
+  </form>
+</ion-content>

@@ -1,0 +1,129 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>payTv</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-text>COMING SOON</ion-text>
+
+  <form [formGroup]="payTvForm" (ngSubmit)="submit()" *ngIf="false">
+    <ion-list>
+      <!-- Meter Number -->
+      <ion-item>
+        <ion-input
+          formControlName="meterNumber"
+          type="text"
+          placeholder="Enter meter number"
+          label-placement="floating"
+          label="Meter Number"
+          fill="outline"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('meterNumber', 'required')">
+        Meter Number is required
+      </ion-text>
+<br />
+
+      <ion-item>
+        <ion-input
+        label="Phone Number"
+          formControlName="phoneNumber"
+          type="tel"
+          placeholder="Enter phone number"
+          label-placement="floating"
+          fill="outline"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('Phone', 'required')">
+        Phone Number is required
+      </ion-text>
+      <br />
+
+      <!-- TV Company Dropdown -->
+      <ion-item>
+        <ion-select
+          formControlName="tvCompany"
+          placeholder="Select TV Company"
+          (ionChange)="onTvCompanyChange($event)"
+          label-placement="floating"
+          fill="outline"
+          label="TV Company">
+          <ion-select-option *ngFor="let company of tvCompanies" [value]="company">
+            {{ company.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('tvCompany', 'required')">
+        TV Company is required
+      </ion-text>
+      <br />
+
+      <!-- Bouquet Dropdown -->
+      <ion-item>
+        <ion-select
+          formControlName="bouquet"
+          placeholder="Select Bouquet"
+          [disabled]="!availableBouquets.length"
+          label-placement="floating"
+          fill="outline"
+          label="Bouquet">
+          <ion-select-option *ngFor="let bouquet of availableBouquets" [value]="bouquet">
+            {{ bouquet }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('bouquet', 'required')">
+        Bouquet is required
+      </ion-text>
+      <br />
+
+      <!-- Amount -->
+      <ion-item>
+        <ion-input
+          formControlName="amount"
+          type="number"
+          placeholder="Enter amount"
+          required
+          fill="outline"
+          label-placement="floating"
+          label="Amount">
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('amount', 'required')">
+        Amount is required
+      </ion-text>
+      <br />
+
+      <!-- Password -->
+      <ion-item>
+        <ion-input
+          label="Password"
+          formControlName="password"
+          type="password"
+          placeholder="Enter password"
+          fill="outline"
+          label-placement="floating"
+          required
+          label-placement="floating"
+          label="Password"
+          fill="outline">
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="isSubmitted && hasError('password', 'required')">
+        Password is required
+      </ion-text>
+<br />
+
+    </ion-list>
+
+    <div class="ion-padding">
+      <ion-button type="submit" expand="block">Pay TV</ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transactions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Category Buttons -->
+  <div class="category-buttons" slot="fixed">
+    <ion-buttons>
+      <ion-button
+        size="small"
+        *ngFor="let category of categories"
+        [color]="selectedCategory === category ? 'primary' : 'medium'"
+        (click)="filterTransactions(category)"
+      >
+        {{ category }}
+      </ion-button>
+    </ion-buttons>
+  </div>
+
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+
+  <ion-list style="margin-top: 30px;">
+    <ion-item
+      *ngFor="let transaction of filteredTransactions"
+      lines="full"
+      (click)="goToPrintPage(transaction)"
+      >
+      <!-- Transaction Details -->
+      <ion-label class="ion-text-wrap">
+        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'">
+          <h2>{{ transaction.transType }}</h2>
+        </ion-text>
+        <div style="display: flex; ">
+          <span style="background-color:rgb(219, 211, 211); border-radius: 50%; width: 50px; height: 50px; padding: 3.5%;">
+            <ion-icon name="checkmark-done-circle-outline" size="large" color="white"></ion-icon>
+          </span>
+
+          <p style="background-color: aliceblue; width: 70%; padding-inline: 10px; padding-top: 5%; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+            {{ transaction.transDate }}
+          </p>
+        </div>
+          <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'"
+            style="font-size: 10px;">{{transaction.remarks || ''}}
+          </ion-text>
+      </ion-label>
+
+      <!-- Transaction Amount -->
+      <ion-label
+      class="ion-text-wrap"
+      style="flex: 0 0 30%; text-align: right; padding: 5px;"
+      >
+        <ion-text color="primary">{{ transaction.amount }}</ion-text>
+        <br />
+        <ion-text>{{ transaction.transactionID }} <br /> {{transaction.product}}</ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

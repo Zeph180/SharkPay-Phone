@@ -1,0 +1,69 @@
+
+  .wallet-card {
+    // background: linear-gradient(45deg, #6a1b9a, #8e24aa);
+    color: white;
+    text-align: center;
+  }
+
+  .wallet-info h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+
+  .wallet-info h2 {
+    font-size: 1.2rem;
+    margin-top: -10px;
+  }
+
+  .service-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6a1b9a;
+
+    ion-icon {
+      margin-bottom: 5px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+  }
+
+  .banner-card {
+    // background: linear-gradient(45deg, #6a1b9a, #8e24aa);
+    color: white;
+    text-align: center;
+  }
+
+  .banner h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .banner p {
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+
+  ion-card-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  ion-note {
+    font-size: 0.9rem;
+    color: gray;
+  }
+
+  .scrollable-list {
+    height: 60%;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-bottom: 25px;
+  }

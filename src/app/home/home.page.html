@@ -1,0 +1,115 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <swiper-container
+    [slidesPerView]="1.1"
+    [spaceBetween]="10"
+    [loop]="true"
+    [pagination]="true"
+    class="mySwiper"
+  >
+  <swiper-slide     *ngFor="let account of accounts">
+    <ion-card
+    class="wallet-card"
+    style="width: 95%;"
+  >
+    <ion-card-content>
+      <div class="wallet-info">
+        <p>{{ account.accountType }}</p>
+        <h2>{{ account.accountNumber }}</h2>
+        <p>Account Balance</p>
+        <h2>{{ account.balance }}</h2>
+      </div>
+    </ion-card-content>
+  </ion-card>
+  </swiper-slide>
+</swiper-container>
+
+ <!-- Popular Services -->
+<ion-text class="ion-padding">Popular Services</ion-text>
+<swiper-container
+[slidesPerView]="3"
+[spaceBetween]="5"
+[pagination]="true"
+class="mySwiper"
+>
+<swiper-slide     *ngFor="let popular of popularServices"   routerDirection="root"
+[routerLink]="[popular.route]">
+<ion-card
+class="wallet-card"
+style="width: 95%;"
+class="ion-text-center service-item"
+>
+<ion-card-content style="background-color: white;">
+  <ion-button
+  fill="clear"
+  class="service-btn"
+  style="margin: 0; padding: 0;"
+  routerDirection="root"
+  [routerLink]="[popular.route]"
+>
+<ion-icon [md]="popular.icon" size="large" style="color: white;"></ion-icon>
+</ion-button>
+<ion-text>{{ popular.title }}</ion-text>
+</ion-card-content>
+</ion-card>
+</swiper-slide>
+</swiper-container>
+
+  <!-- SwApp Banner -->
+  <ion-card class="banner-card">
+    <ion-card-content>
+      <div class="banner">
+        <h4>SharkPay</h4>
+        <p>Send money to other SharkPay Users. <br /> No Charges!</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Commissions Section -->
+  <ion-text class="ion-padding">Transactions</ion-text>
+  <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center;">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+  <ion-list  class="scrollable-list">
+    <ion-item
+      *ngFor="let transaction of transactions"
+      lines="full"
+      (click)="queryTransactionDetails(transaction.transactionReference, transaction.productID, transaction.product)"
+      >
+      <!-- Transaction Details -->
+      <ion-label class="ion-text-wrap">
+        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'">
+          <h2>{{ transaction.transType }}</h2>
+        </ion-text>
+        <div style="display: flex; ">
+          <span style="background-color:rgb(219, 211, 211); border-radius: 50%; width: 50px; height: 50px; padding: 3.5%;">
+            <ion-icon name="checkmark-done-circle-outline" size="large" color="white"></ion-icon>
+          </span>
+
+          <p style="background-color: aliceblue; width: 70%; padding-inline: 10px; padding-top: 5%; border-top-right-radius: 30px; border-bottom-right-radius: 30px;">
+            {{ transaction.transDate }}
+          </p>
+        </div>
+        <ion-text [color]="transaction.transType.toUpperCase() === 'CREDIT' ? 'success' : 'danger'" style="font-size: 10px;">{{transaction.remarks || ''}}</ion-text>
+      </ion-label>
+
+      <!-- Transaction Amount -->
+      <ion-label
+      class="ion-text-wrap"
+      style="flex: 0 0 30%; text-align: right; padding: 5px;"
+      >
+        <ion-text color="primary">{{ transaction.amount }}</ion-text>
+        <br />
+        <ion-text>{{ transaction.transactionReference }} <br/> {{transaction.product}}</ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
