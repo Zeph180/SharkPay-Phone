@@ -258,7 +258,7 @@ export class HomePage implements OnInit {
           transaction.productName = prodName;
           transaction.userName = this.user.customerName;
           console.log('Retrieved Transactions:', transaction);
-          this.router.navigate(['/print'], {
+          this.router.navigate(['/checkout'], {
             queryParams: { transaction: JSON.stringify(transaction) },
           });
         },

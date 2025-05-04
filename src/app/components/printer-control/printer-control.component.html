@@ -1,0 +1,29 @@
+
+<!-- src/app/components/printer-control/printer-control.component.html -->
+<ion-list>
+  <ion-list-header>
+    <ion-label>Printer Settings</ion-label>
+  </ion-list-header>
+
+  <ion-item>
+    <ion-button expand="block" (click)="discoverPrinters()" [disabled]="isDiscovering">
+      <ion-spinner *ngIf="isDiscovering"></ion-spinner>
+      {{ isDiscovering ? 'Discovering...' : 'Find Printers' }}
+    </ion-button>
+  </ion-item>
+
+  <ion-item *ngIf="printers.length > 0">
+    <ion-label>Select Printer</ion-label>
+    <ion-select (ionChange)="printerChanged($event)">
+      <ion-select-option *ngFor="let printer of printers" [value]="printer">
+        {{ printer.name || 'Unknown' }} ({{ printer.address }})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="selectedPrinter">
+    <ion-button expand="block" (click)="connectPrinter()" [disabled]="isConnected">
+      {{ isConnected ? 'Connected' : 'Connect' }}
+    </ion-button>
+  </ion-item>
+</ion-list>

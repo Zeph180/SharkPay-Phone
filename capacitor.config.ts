@@ -8,6 +8,8 @@ const config: CapacitorConfig = {
     nexgosdk: {
       // Add plugin-specific configurations if required
     },
+    Printer: {
+    },
     LocalNetwork: {
       cleartextTrafficPermitted: true
     },

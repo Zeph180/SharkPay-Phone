@@ -1,7 +1,7 @@
 import { GlobalMethodsService } from './../helpers/global-methods.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NexgoSDKNew } from 'nexgsdknew';
+// import { NexgoSDKNew } from 'nexgsdknew';
 
 
 @Component({
@@ -107,43 +107,43 @@ export class PrintPage implements OnInit {
 
 
   async printWholeReceipt() {
-    try {
-      const terminalId = this.globalMethodsService.getUserData2('deviceID');
-      // Base64 logo image string
-      const logoBase64 = await this.convertImageToBase64('../../assets/images/sharkLogo.PNG', 200, 100);
-
-      // Step 1: Print the logo
-      await NexgoSDKNew['printImage']({
-        base64Image: logoBase64,
-      });
-
-      console.log("receipt data:", this.transaction)
-
-      // Step 3: Prepare receipt content
-      const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n--------------------------------\n`;
-      var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.productName}\n Date:       ${this.transaction.transDate || this.transaction.transactionDate}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount.replace('.0000', '')}\n Charges:     ${this.transaction.charges.replace('.0000', '') }\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} `;
-      const uraAdditional = `\n--------------------------------\n PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer || this.transaction.taxPayerName}\n--------------------------------\n`;
-      const receiptFooter = `  For support call: 0200190112  \n  Email: support@sharkpay.co.ug     Website: sharkpay.co.ug    \n   Powered by Utrax Agency Ltd  \n     Supported by GTBank  \n--------------------------------\n Thank you for paying with us!`;
-      var receipt = ``;
-
-      this.transaction.productName == 'URA' ?
-        receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter :
-        receipt = receiptHeader + receiptDetails + receiptHeader + receiptFooter;
-
-      // Step 4: Print the receipt text
-      await NexgoSDKNew['printText']({
-        text: receipt,
-        fontSize: 24,
-        alignment: 'LEFT',
-        bold: true,
-      });
-
-      // Step 5: Start the print process
-      await NexgoSDKNew['startPrint']();
-      this.navigateToHome();
-    } catch (error) {
-      console.error('Printing failed:', error);
-    }
+    // try {
+    //   const terminalId = this.globalMethodsService.getUserData2('deviceID');
+    //   // Base64 logo image string
+    //   const logoBase64 = await this.convertImageToBase64('../../assets/images/sharkLogo.PNG', 200, 100);
+    //
+    //   // Step 1: Print the logo
+    //   await NexgoSDKNew['printImage']({
+    //     base64Image: logoBase64,
+    //   });
+    //
+    //   console.log("receipt data:", this.transaction)
+    //
+    //   // Step 3: Prepare receipt content
+    //   const receiptHeader = `\n--------------------------------\n Customer Care: 0 200 910 112  \n Tin:           1027114639     \n Terminal:      ${terminalId}         \n--------------------------------\n`;
+    //   var receiptDetails = ` Receipt ID:     ${this.transaction.transactionID}\n Service:     ${this.transaction.productName}\n Date:       ${this.transaction.transDate || this.transaction.transactionDate}\n Contact:     ${this.transaction.contact}\n Amount:      ${this.transaction.amount.replace('.0000', '')}\n Charges:     ${this.transaction.charges.replace('.0000', '') }\n Total Amount:     ${parseFloat(this.transaction.amount) + parseFloat(this.transaction.charges)} \n Served By:  ${this.transaction.userName} `;
+    //   const uraAdditional = `\n--------------------------------\n PRN:     ${this.transaction.prn}\n Payer:   ${this.transaction.payer || this.transaction.taxPayerName}\n--------------------------------\n`;
+    //   const receiptFooter = `  For support call: 0200190112  \n  Email: support@sharkpay.co.ug     Website: sharkpay.co.ug    \n   Powered by Utrax Agency Ltd  \n     Supported by GTBank  \n--------------------------------\n Thank you for paying with us!`;
+    //   var receipt = ``;
+    //
+    //   this.transaction.productName == 'URA' ?
+    //     receipt = receiptHeader + receiptDetails + uraAdditional + receiptFooter :
+    //     receipt = receiptHeader + receiptDetails + receiptHeader + receiptFooter;
+    //
+    //   // Step 4: Print the receipt text
+    //   await NexgoSDKNew['printText']({
+    //     text: receipt,
+    //     fontSize: 24,
+    //     alignment: 'LEFT',
+    //     bold: true,
+    //   });
+    //
+    //   // Step 5: Start the print process
+    //   await NexgoSDKNew['startPrint']();
+    //   this.navigateToHome();
+    // } catch (error) {
+    //   console.error('Printing failed:', error);
+    // }
   }
 
   navigateToHome() {
